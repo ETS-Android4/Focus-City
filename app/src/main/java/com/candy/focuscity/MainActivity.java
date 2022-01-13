@@ -11,6 +11,12 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+/**
+ * Focus City
+ * @author : Andy Jun Cheng Low
+ * Part of the timer code was referenced from androidtutorialshub.com
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     private long timeCountInMilliSeconds = (15 * 1 * 60000) / 60; // Minutes-Seconds for Testing
@@ -50,9 +56,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Activate Seek Bar Time Select
+        // Activate SeekBar Time Select
         setTimerValues();
-
     }
 
     private void startStop() {
@@ -81,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 selectedTime = 15 + progress * 15; // Minutes
+                seekTime.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 
                 if (selectedTime < 60) {
                     building.setText("15");
@@ -91,9 +97,11 @@ public class MainActivity extends AppCompatActivity {
                 } else if (selectedTime == 120) {
                     building.setText("120");
                 }
+
             textViewTime.setText(selectedTime + ":00");
             timeCountInMilliSeconds = (selectedTime * 1000 * 60) / 60; // Minutes-Seconds (Del/60)
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {};
             @Override

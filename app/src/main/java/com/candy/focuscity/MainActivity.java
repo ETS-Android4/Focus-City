@@ -11,6 +11,8 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Focus City
  * @author : Andy Jun Cheng Low
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Select timer countdown values by using SeekBar as controller
+     * Select Timer Countdown Values by using SeekBar as controller
      */
     private void setTimerValues() {
         seekTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Method to start countdown
+     * Method to Start Countdown
      */
     private void startCountdownTimer(){
         // TODO Change buildings to Images
@@ -138,13 +140,15 @@ public class MainActivity extends AppCompatActivity {
                     building.setText("120");
                 }
                 System.out.println(elapsed); // TODO Remove Debugging
-                //textViewTime.setText();
+                textViewTime.setText(msTimeFormatter(millisUntilFinished));
                 progressBarCircle.setProgress((int) (millisUntilFinished/1000));
             }
 
             @Override
             public void onFinish() {
                 // TODO Build Notifications
+
+                // TODO Build PopUp
 
                 // Reset Button Text to Build
                 buttonStartStop.setText("Build");
@@ -154,15 +158,33 @@ public class MainActivity extends AppCompatActivity {
                 timerStatus = TimerStatus.STOPPED;
                 // Reset Progress Bar Values
                 setProgressBarValues();
+                // Reset Time TextView
+                textViewTime.setText(msTimeFormatter(timeCountInMilliSeconds));
 
             }
         };
         countDownTimer.start();
     }
 
+    /**
+     * Method to set Circular Progress Bar Values
+     */
+
     public void setProgressBarValues() {
         progressBarCircle.setMax((int) timeCountInMilliSeconds/1000);
         progressBarCircle.setProgress((int) timeCountInMilliSeconds/1000);
+    }
+
+    /**
+     * Method to convert MilliSeconds to Minute Time Format
+     */
+    private String msTimeFormatter(long milliSeconds) {
+        String ms = String.format("%d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(milliSeconds),
+                TimeUnit.MILLISECONDS.toSeconds(milliSeconds) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
+
+        return ms;
     }
 
 }

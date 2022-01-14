@@ -3,6 +3,7 @@ package com.candy.focuscity;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.HapticFeedbackConstants;
@@ -115,26 +116,36 @@ public class MainActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 selectedTime = 15 + progress * 15; // Minutes
                 seekTime.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                // TODO Add PopSounds (Building Class)
+                MediaPlayer popSound = null;
+
                 if (selectedTime < 60) {
+                    popSound = MediaPlayer.create(MainActivity.this, R.raw.pope5);
                     building.changeBuilding(15);
-                    System.out.println("Check");
                     building.totalBuildTime = 15;
                 } else if (selectedTime < 90) {
+                    popSound = MediaPlayer.create(MainActivity.this, R.raw.popg5);
                     building.changeBuilding(60);
                     building.totalBuildTime = 60;
                 } else if (selectedTime < 120) {
+                    popSound = MediaPlayer.create(MainActivity.this, R.raw.popc6);
                     building.changeBuilding(90);
                     building.totalBuildTime = 90;
                 } else if (selectedTime == 120) {
+                    popSound = MediaPlayer.create(MainActivity.this, R.raw.pope6);
                     building.changeBuilding(120);
                     building.totalBuildTime = 120;
                 }
 
-            textViewTime.setText(selectedTime + ":00");
-            timeCountInMilliSeconds = (selectedTime * 1000 * 60) / 60; // Minutes-Seconds (Del/60)
+                if (popSound != null) {
+                    popSound.start();
+                    popSound.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) { mp.release(); }
+                    });
+                }
+                textViewTime.setText(selectedTime + ":00");
+                timeCountInMilliSeconds = (selectedTime * 1000 * 60) / 60; // Minutes-Seconds (Del/60)
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {};
             @Override
@@ -227,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         if (!success) {
             buildSuccessText.setText("Construction Failed :(");
         } else {
-            buildSuccessText.setText("Construction Complete!!!");
+            buildSuccessText.setText("Construction Complete !!!");
         }
 
         building.buildingImageView = popupBuildingView;

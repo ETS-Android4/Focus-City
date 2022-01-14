@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     private long timeCountInMilliSeconds = (15 * 1 * 60000) / 60; // Minutes-Seconds for Testing
-    private int totalBuildTime = 15; // TODO Move to Building class
 
     // Timer Declaration
     private enum TimerStatus {
@@ -36,9 +35,11 @@ public class MainActivity extends AppCompatActivity {
     // Views Declaration
     private SeekBar seekTime;
     private ProgressBar progressBarCircle;
-    private ImageView building; // TODO Change to building classes
     private TextView textViewTime;
     private Button buttonStartStop;
+    private ImageView buildingImage;
+
+    private Building building;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +49,11 @@ public class MainActivity extends AppCompatActivity {
         // View Initialisation
         seekTime = (SeekBar) findViewById(R.id.seekBarTimeSelect);
         progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
-        building = (ImageView) findViewById(R.id.buildingView);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         buttonStartStop = (Button) findViewById(R.id.startStopButton);
+        buildingImage = (ImageView) findViewById(R.id.buildingView);
+
+        building = new Building("Jett", buildingImage);
 
         // Listeners Initialisation
         buttonStartStop.setOnClickListener(new View.OnClickListener() {
@@ -76,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
             buttonStartStop.setText("Give Up");
             // Select Countdown Time
             setTimerValues();
-            // Initialise Progress Bar
-            setProgressBarValues();
             // Start Countdown
             startCountdownTimer();
             // TODO Show Warning of Building Destruction Before Starting
@@ -94,9 +95,13 @@ public class MainActivity extends AppCompatActivity {
             seekTime.setEnabled(true);
             // Create Failure Dialog
             createNewPopupDialog(false);
+            // Change Focus Back to Main Activity
+            building.buildingImageView = buildingImage;
+            building.changeBuilding(building.totalBuildTime);
             // TODO Hold Button to Give up
-
         }
+        // Initialise Progress Bar
+        setProgressBarValues();
     }
 
     /**
@@ -112,17 +117,18 @@ public class MainActivity extends AppCompatActivity {
                 seekTime.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 // TODO Add PopSounds (Building Class)
                 if (selectedTime < 60) {
-                    building.setText("15");
-                    totalBuildTime = 15;
+                    building.changeBuilding(15);
+                    System.out.println("Check");
+                    building.totalBuildTime = 15;
                 } else if (selectedTime < 90) {
-                    building.setText("60");
-                    totalBuildTime = 60;
+                    building.changeBuilding(60);
+                    building.totalBuildTime = 60;
                 } else if (selectedTime < 120) {
-                    building.setText("90");
-                    totalBuildTime = 90;
+                    building.changeBuilding(90);
+                    building.totalBuildTime = 90;
                 } else if (selectedTime == 120) {
-                    building.setText("120");
-                    totalBuildTime = 120;
+                    building.changeBuilding(120);
+                    building.totalBuildTime = 120;
                 }
 
             textViewTime.setText(selectedTime + ":00");
@@ -140,18 +146,20 @@ public class MainActivity extends AppCompatActivity {
      * Method to Start Countdown
      */
     private void startCountdownTimer(){
+        building.changeBuilding(0);
         // TODO Change buildings to Images
-        building.setText("0");
         countDownTimer = new CountDownTimer(timeCountInMilliSeconds,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long elapsed = (timeCountInMilliSeconds - millisUntilFinished) / 1000 * 60; // Seconds*60 Del*60
-                if (elapsed == 60*60) {
-                    building.setText("60");
+                if (elapsed == 15*60) {
+                    building.changeBuilding(15);
+                } else if (elapsed == 60*60) {
+                    building.changeBuilding(60);
                 } else if (elapsed == 90*60) {
-                    building.setText("90");
+                    building.changeBuilding(90);
                 } else if (elapsed == 120*60) {
-                    building.setText("120");
+                    building.changeBuilding(120);
                 }
                 System.out.println(elapsed); // TODO Remove Debugging
                 textViewTime.setText(msTimeFormatter(millisUntilFinished));
@@ -207,20 +215,23 @@ public class MainActivity extends AppCompatActivity {
      */
     private void createNewPopupDialog(boolean success) {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        TextView popupBuildingView;
+        ImageView popupBuildingView;
         TextView buildSuccessText;
         Button closeButton;
 
         final View popupView = getLayoutInflater().inflate(R.layout.popup, null);
-        popupBuildingView = (TextView) popupView.findViewById(R.id.popupBuildingView); // TODO Change to Image
+        popupBuildingView = (ImageView) popupView.findViewById(R.id.popupBuildingView); // TODO Change to Image
         closeButton = (Button) popupView.findViewById(R.id.closeButton);
         buildSuccessText = (TextView) popupView.findViewById(R.id.buildSuccessText);
 
         if (!success) {
             buildSuccessText.setText("Construction Failed :(");
+        } else {
+            buildSuccessText.setText("Construction Complete!!!");
         }
 
-        popupBuildingView.setText(String.format("%d", totalBuildTime));
+        building.buildingImageView = popupBuildingView;
+        building.changeBuilding(building.totalBuildTime);
 
         dialogBuilder.setView(popupView);
         final AlertDialog dialog = dialogBuilder.create();

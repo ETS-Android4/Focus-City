@@ -8,6 +8,7 @@ import android.os.CountDownTimer;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     // Views Declaration
     private SeekBar seekTime;
     private ProgressBar progressBarCircle;
-    private TextView building; // TODO Change to building classes
+    private ImageView building; // TODO Change to building classes
     private TextView textViewTime;
     private Button buttonStartStop;
 
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         // View Initialisation
         seekTime = (SeekBar) findViewById(R.id.seekBarTimeSelect);
         progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
-        building = (TextView) findViewById(R.id.buildingView);
+        building = (ImageView) findViewById(R.id.buildingView);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         buttonStartStop = (Button) findViewById(R.id.startStopButton);
 
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
             setProgressBarValues();
             // Start Countdown
             startCountdownTimer();
+            // TODO Show Warning of Building Destruction Before Starting
+
         } else {
 
             // Countdown Timer Stop Status
@@ -89,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
             buttonStartStop.setText("Build");
             // Make SeekBar Editable
             seekTime.setEnabled(true);
+            // Create Failure Dialog
+            createNewPopupDialog(false);
+            // TODO Hold Button to Give up
+
         }
     }
 
@@ -157,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Shows a Popup Dialog
                 // TODO Implement Failed Popup
-                createNewPopupDialog();
+                createNewPopupDialog(true);
                 // Reset Button Text to Build
                 buttonStartStop.setText("Build");
                 // Make SeekBar Editable
@@ -198,14 +205,20 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Create a Popup window on build success
      */
-    private void createNewPopupDialog() {
+    private void createNewPopupDialog(boolean success) {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         TextView popupBuildingView;
+        TextView buildSuccessText;
         Button closeButton;
 
         final View popupView = getLayoutInflater().inflate(R.layout.popup, null);
         popupBuildingView = (TextView) popupView.findViewById(R.id.popupBuildingView); // TODO Change to Image
         closeButton = (Button) popupView.findViewById(R.id.closeButton);
+        buildSuccessText = (TextView) popupView.findViewById(R.id.buildSuccessText);
+
+        if (!success) {
+            buildSuccessText.setText("Construction Failed :(");
+        }
 
         popupBuildingView.setText(String.format("%d", totalBuildTime));
 

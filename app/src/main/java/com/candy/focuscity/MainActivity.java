@@ -1,5 +1,6 @@
 package com.candy.focuscity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     private long timeCountInMilliSeconds = (15 * 1 * 60000) / 60; // Minutes-Seconds for Testing
+    private int totalBuildTime = 15; // TODO Move to Building class
 
     // Timer Declaration
     private enum TimerStatus {
@@ -94,21 +96,26 @@ public class MainActivity extends AppCompatActivity {
      * Select Timer Countdown Values by using SeekBar as controller
      */
     private void setTimerValues() {
+        // TODO Stylize SeekBar with Gradient
         seekTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int selectedTime; // Minutes
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 selectedTime = 15 + progress * 15; // Minutes
                 seekTime.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-
+                // TODO Add PopSounds (Building Class)
                 if (selectedTime < 60) {
                     building.setText("15");
+                    totalBuildTime = 15;
                 } else if (selectedTime < 90) {
                     building.setText("60");
+                    totalBuildTime = 60;
                 } else if (selectedTime < 120) {
                     building.setText("90");
+                    totalBuildTime = 90;
                 } else if (selectedTime == 120) {
                     building.setText("120");
+                    totalBuildTime = 120;
                 }
 
             textViewTime.setText(selectedTime + ":00");
@@ -148,8 +155,9 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
                 // TODO Build Notifications
 
-                // TODO Build PopUp
-
+                // Shows a Popup Dialog
+                // TODO Implement Failed Popup
+                createNewPopupDialog();
                 // Reset Button Text to Build
                 buttonStartStop.setText("Build");
                 // Make SeekBar Editable
@@ -185,6 +193,30 @@ public class MainActivity extends AppCompatActivity {
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
 
         return ms;
+    }
+
+    /**
+     * Create a Popup window on build success
+     */
+    private void createNewPopupDialog() {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        TextView popupBuildingView;
+        Button closeButton;
+
+        final View popupView = getLayoutInflater().inflate(R.layout.popup, null);
+        popupBuildingView = (TextView) popupView.findViewById(R.id.popupBuildingView); // TODO Change to Image
+        closeButton = (Button) popupView.findViewById(R.id.closeButton);
+
+        popupBuildingView.setText(String.format("%d", totalBuildTime));
+
+        dialogBuilder.setView(popupView);
+        final AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { dialog.dismiss(); }
+        });
     }
 
 }

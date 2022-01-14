@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             buttonStartStop.setText("Build");
             // Make SeekBar Editable
             seekTime.setEnabled(true);
-            // Create Failure Dialog
+            // Shows an Unsuccessful Dialog
             createNewPopupDialog(false);
             // Change Focus Back to Main Activity
             building.buildingImageView = buildingImage;
@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void startCountdownTimer(){
         building.changeBuilding(0);
-        // TODO Change buildings to Images
         countDownTimer = new CountDownTimer(timeCountInMilliSeconds,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -181,8 +180,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
                 // TODO Build Notifications
 
-                // Shows a Popup Dialog
-                // TODO Implement Failed Popup
+                // Shows a Successful Popup Dialog
                 createNewPopupDialog(true);
                 // Reset Button Text to Build
                 buttonStartStop.setText("Build");
@@ -231,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
         Button closeButton;
 
         final View popupView = getLayoutInflater().inflate(R.layout.popup, null);
-        popupBuildingView = (ImageView) popupView.findViewById(R.id.popupBuildingView); // TODO Change to Image
+        popupBuildingView = (ImageView) popupView.findViewById(R.id.popupBuildingView);
         closeButton = (Button) popupView.findViewById(R.id.closeButton);
         buildSuccessText = (TextView) popupView.findViewById(R.id.buildSuccessText);
 

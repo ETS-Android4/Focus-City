@@ -102,7 +102,7 @@
     <ProgressBar
         android:id="@+id/progressBarCircle"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="400dp"
         android:background="@drawable/drawable_circle_dark_blue"
         android:indeterminate="false"
@@ -117,8 +117,9 @@
 
     <ImageView
         android:id="@+id/buildingView"
-        android:layout_width="270dp"
-        android:layout_height="310dp"
+        android:layout_width="300dp"
+        android:layout_height="360dp"
+        android:layout_marginBottom="70dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/progressBarCircle"
@@ -127,7 +128,8 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/progressBarCircle"
-        app:layout_constraintVertical_bias="0.335" />
+        app:layout_constraintVertical_bias="0.335"
+        tools:src="@drawable/jett120" />
 
     <Button
         android:id="@+id/startStopButton"

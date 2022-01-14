@@ -16,7 +16,6 @@ import android.widget.TextView;
  * @author : Andy Jun Cheng Low
  * Part of the timer code was referenced from androidtutorialshub.com
  */
-
 public class MainActivity extends AppCompatActivity {
 
     private long timeCountInMilliSeconds = (15 * 1 * 60000) / 60; // Minutes-Seconds for Testing
@@ -60,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         setTimerValues();
     }
 
+    /**
+     * Wired to StartStop Button to start or stop timer
+     */
     private void startStop() {
         if (timerStatus == TimerStatus.STOPPED) {
 
@@ -69,17 +71,26 @@ public class MainActivity extends AppCompatActivity {
             buttonStartStop.setText("Give Up");
             // Select Countdown Time
             setTimerValues();
-
+            // Initialise Progress Bar
+            setProgressBarValues();
+            // Start Countdown
+            startCountdownTimer();
         } else {
 
             // Countdown Timer Stop Status
             timerStatus = TimerStatus.STOPPED;
+            // Stop Countdown Timer
+            countDownTimer.cancel();
             // Change Button Text
             buttonStartStop.setText("Build");
-
+            // Make SeekBar Editable
+            seekTime.setEnabled(true);
         }
     }
 
+    /**
+     * Select timer countdown values by using SeekBar as controller
+     */
     private void setTimerValues() {
         seekTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int selectedTime; // Minutes
@@ -107,6 +118,51 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {};
         });
+    }
+
+    /**
+     * Method to start countdown
+     */
+    private void startCountdownTimer(){
+        // TODO Change buildings to Images
+        building.setText("0");
+        countDownTimer = new CountDownTimer(timeCountInMilliSeconds,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long elapsed = (timeCountInMilliSeconds - millisUntilFinished) / 1000 * 60; // Seconds*60 Del*60
+                if (elapsed == 60*60) {
+                    building.setText("60");
+                } else if (elapsed == 90*60) {
+                    building.setText("90");
+                } else if (elapsed == 120*60) {
+                    building.setText("120");
+                }
+                System.out.println(elapsed); // TODO Remove Debugging
+                //textViewTime.setText();
+                progressBarCircle.setProgress((int) (millisUntilFinished/1000));
+            }
+
+            @Override
+            public void onFinish() {
+                // TODO Build Notifications
+
+                // Reset Button Text to Build
+                buttonStartStop.setText("Build");
+                // Make SeekBar Editable
+                seekTime.setEnabled(true);
+                // Change Timer Status to STOPPED
+                timerStatus = TimerStatus.STOPPED;
+                // Reset Progress Bar Values
+                setProgressBarValues();
+
+            }
+        };
+        countDownTimer.start();
+    }
+
+    public void setProgressBarValues() {
+        progressBarCircle.setMax((int) timeCountInMilliSeconds/1000);
+        progressBarCircle.setProgress((int) timeCountInMilliSeconds/1000);
     }
 
 }

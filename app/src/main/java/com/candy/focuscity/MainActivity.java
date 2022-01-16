@@ -2,8 +2,15 @@ package com.candy.focuscity;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.HapticFeedbackConstants;
@@ -23,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private long timeCountInMilliSeconds = (15 * 1 * 60000) / 60; // Minutes-Seconds for Testing
+    private final String CHANNEL_ID = "Focus";
 
     // Timer Declaration
     private enum TimerStatus {
@@ -39,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewTime;
     private Button buttonStartStop;
     private ImageView buildingImage;
-
     private Building building;
+    private long timeCountInMilliSeconds = (15 * 1 * 60000) / 60; // Minutes-Seconds for Testing
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Activate SeekBar Time Select
         setTimerValues();
+
+        // Create Notification Channel
+        createNotificationChannel();
     }
 
     /**
@@ -178,8 +188,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                // TODO Build Notifications
-
+                // Show Build Complete Notification
+                createNotifications();
                 // Shows a Successful Popup Dialog
                 createNewPopupDialog(true);
                 // Reset Button Text to Build
@@ -250,6 +260,45 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) { dialog.dismiss(); }
         });
+    }
+
+    /**
+     * Create a Notification Channel for API 26+ only
+     */
+    private void createNotificationChannel() {
+        // Create notification channel for API 26+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Build Complete Notification";
+            String description = "Channel for build complete notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void createNotifications() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(getApplicationContext(), 0, intent,0);
+
+        NotificationCompat.Builder builder = new
+                NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("Construction Complete")
+                .setContentText("Well Done!")
+                .setVibrate(new long[] {500,500,500,500})
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager =
+                NotificationManagerCompat.from(getApplicationContext());
+
+        notificationManager.notify(100, builder.build());
     }
 
 }

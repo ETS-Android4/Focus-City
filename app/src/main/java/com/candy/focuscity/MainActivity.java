@@ -1,5 +1,6 @@
 package com.candy.focuscity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.concurrent.TimeUnit;
 
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     // Drawer Layout
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawerLayout;
+    private NavigationView navView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         buttonStartStop = (Button) findViewById(R.id.startStopButton);
         buildingImage = (ImageView) findViewById(R.id.buildingView);
+        navView = (NavigationView) findViewById(R.id.navView);
 
         building = new Building("Jett", buildingImage);
 
@@ -90,6 +95,18 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.recordsPage){
+                    Intent buildIntent = new Intent(getApplicationContext(), recordsActivity.class);
+                    startActivity(buildIntent);
+                    drawerLayout.closeDrawers();
+                }
+                return true;
+            }
+        });
     }
 
     @Override

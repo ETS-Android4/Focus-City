@@ -2,15 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/miItem1"
-        android:title="Item 1" />
+        android:id="@+id/recordsPage"
+        android:title="Records"
+        android:icon="@drawable/ic_baseline_notes_24"/>
 
     <item
-        android:id="@+id/miItem2"
-        android:title="Item 2" />
-
-    <item
-        android:id="@+id/miItem3"
-        android:title="Item 3" />
+        android:id="@+id/cityPage"
+        android:title="City"
+        android:icon="@drawable/ic_baseline_corporate_fare_24"/>
 
 </menu>

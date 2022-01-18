@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FocusCity">
         <activity
+            android:name=".recordsActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

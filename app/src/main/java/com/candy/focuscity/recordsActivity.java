@@ -2,6 +2,8 @@ package com.candy.focuscity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -10,6 +12,8 @@ import android.widget.Toolbar;
 
 public class recordsActivity extends AppCompatActivity {
 
+    private RecyclerView recordsRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,6 +21,10 @@ public class recordsActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        recordsRecyclerView = (RecyclerView) findViewById(R.id.recordsRecyclerView);
+        recordsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
     }
 
     @Override

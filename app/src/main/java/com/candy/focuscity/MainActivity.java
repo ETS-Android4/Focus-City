@@ -143,11 +143,11 @@ public class MainActivity extends AppCompatActivity {
             buttonStartStop.setText("Build");
             // Make SeekBar Editable
             seekTime.setEnabled(true);
+            building.changeBuilding(building.totalBuildTime);
             // Shows an Unsuccessful Dialog
             createNewPopupDialog(false);
             // Change Focus Back to Main Activity
             building.buildingImageView = buildingImage;
-            building.changeBuilding(building.totalBuildTime);
             // TODO Hold Button to Give up
         }
         // Initialise Progress Bar
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     building.changeBuilding(120);
                     building.totalBuildTime = 120;
                 }
-
+                buildingImage = building.buildingImageView;
                 if (popSound != null) {
                     popSound.start();
                     popSound.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {

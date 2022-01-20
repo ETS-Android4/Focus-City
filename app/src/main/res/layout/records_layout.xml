@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="70dp"
+    android:layout_width="match_parent"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp" >
+
+        <ImageView
+            android:id="@+id/recordsBuildingImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+
+        <TextView
+            android:id="@+id/recordsDateTime"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/recordsBuildingImage"
+            android:text="Sample Record is recorded here"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/recordsTotalMinutes"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/recordsDateTime"
+            android:gravity="center"
+            android:text="25 min" />
+
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>
+
+
+

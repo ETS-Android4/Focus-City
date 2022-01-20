@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final String CHANNEL_ID = "Focus";
 
+    private static int totalBuildTime = 0;
+
     // Timer Declaration
     private enum TimerStatus {
         STARTED,
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         buttonStartStop = (Button) findViewById(R.id.startStopButton);
-        buildingImage = (ImageView) findViewById(R.id.buildingView);
+        buildingImage = (ImageView) findViewById(R.id.buildingImage);
         navView = (NavigationView) findViewById(R.id.navView);
 
         building = new Building("Jett", buildingImage);
@@ -143,10 +145,10 @@ public class MainActivity extends AppCompatActivity {
             buttonStartStop.setText("Build");
             // Make SeekBar Editable
             seekTime.setEnabled(true);
-            building.changeBuilding(building.totalBuildTime);
+            // TODO Change to Ruins
+            building.changeBuilding(totalBuildTime);
             // Shows an Unsuccessful Dialog
             createNewPopupDialog(false);
-            // Change Focus Back to Main Activity
             building.buildingImageView = buildingImage;
             // TODO Hold Button to Give up
         }
@@ -169,21 +171,18 @@ public class MainActivity extends AppCompatActivity {
 
                 if (selectedTime < 60) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.pope5);
-                    building.changeBuilding(15);
-                    building.totalBuildTime = 15;
+                    totalBuildTime = 15;
                 } else if (selectedTime < 90) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.popg5);
-                    building.changeBuilding(60);
-                    building.totalBuildTime = 60;
+                    totalBuildTime = 60;
                 } else if (selectedTime < 120) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.popc6);
-                    building.changeBuilding(90);
-                    building.totalBuildTime = 90;
+                    totalBuildTime = 90;
                 } else if (selectedTime == 120) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.pope6);
-                    building.changeBuilding(120);
-                    building.totalBuildTime = 120;
+                    totalBuildTime = 120;
                 }
+                building.changeBuilding(totalBuildTime);
                 buildingImage = building.buildingImageView;
                 if (popSound != null) {
                     popSound.start();
@@ -241,6 +240,10 @@ public class MainActivity extends AppCompatActivity {
                 setProgressBarValues();
                 // Reset Time TextView
                 textViewTime.setText(msTimeFormatter(timeCountInMilliSeconds));
+                // Reset Building
+                building = new Building("Jett", buildingImage);
+                building.changeBuilding(totalBuildTime);
+                // TODO Add different Buildings
 
             }
         };
@@ -289,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         building.buildingImageView = popupBuildingView;
-        building.changeBuilding(building.totalBuildTime);
+        building.changeBuilding(totalBuildTime);
 
         dialogBuilder.setView(popupView);
         final AlertDialog dialog = dialogBuilder.create();

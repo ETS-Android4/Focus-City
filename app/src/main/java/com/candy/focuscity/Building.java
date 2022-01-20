@@ -6,7 +6,6 @@ public class Building extends MainActivity {
 
     protected ImageView buildingImageView;
     protected String buildingName;
-    protected int totalBuildTime;
 
     public Building(String buildingName, ImageView buildingImage) {
         this.buildingName = buildingName;

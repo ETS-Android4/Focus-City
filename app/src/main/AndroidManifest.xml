@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FocusCity">
         <activity
-            android:name=".recordsActivity"
+            android:name=".RecordsActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

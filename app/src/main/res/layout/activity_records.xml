@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".recordsActivity">
+    tools:context=".RecordsActivity">
 
     <TextView
         android:id="@+id/recordsText"
@@ -21,9 +21,9 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recordsRecyclerView"
-        android:layout_below="@id/recordsText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/recordsText"
         android:nestedScrollingEnabled="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 

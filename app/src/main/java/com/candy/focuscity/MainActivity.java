@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.recordsPage){
-                    Intent buildIntent = new Intent(getApplicationContext(), recordsActivity.class);
+                    Intent buildIntent = new Intent(getApplicationContext(), RecordsActivity.class);
                     startActivity(buildIntent);
                     drawerLayout.closeDrawers();
                 }

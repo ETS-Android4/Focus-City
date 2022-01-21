@@ -10,21 +10,47 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.Toolbar;
 
-public class recordsActivity extends AppCompatActivity {
+import com.candy.focuscity.Adapter.RecordAdapter;
+import com.candy.focuscity.Model.RecordModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class RecordsActivity extends AppCompatActivity {
 
     private RecyclerView recordsRecyclerView;
+    private RecordAdapter recordAdapter;
+
+    private List<RecordModel> recordList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_records);
 
+        recordList = new ArrayList<>();
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         recordsRecyclerView = (RecyclerView) findViewById(R.id.recordsRecyclerView);
         recordsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recordAdapter = new RecordAdapter(this);
+        recordsRecyclerView.setAdapter(recordAdapter);
 
+        RecordModel record = new RecordModel();
+        record.setDateTimeFormatted();
+        record.setTotalMinutes(60);
+        record.setBuildingImageId(R.drawable.jett120);
+        record.setId(1);
+
+        recordList.add(record);
+        recordList.add(record);
+        recordList.add(record);
+        recordList.add(record);
+        recordList.add(record);
+
+        recordAdapter.setRecords(recordList);
     }
 
     @Override

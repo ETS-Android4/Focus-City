@@ -4,34 +4,34 @@ import android.widget.ImageView;
 
 public class Building extends MainActivity {
 
-    protected ImageView buildingImageView;
     protected String buildingName;
+    protected int buildingImageViewId;
 
-    public Building(String buildingName, ImageView buildingImage) {
+    public Building(String buildingName, int buildingImageViewId) {
         this.buildingName = buildingName;
-        this.buildingImageView = buildingImage;
-        buildingImageView.setImageResource(R.drawable.jett15);
+        this.buildingImageViewId = buildingImageViewId;
     }
 
-    public void changeBuilding(int minutes) {
+    public void changeBuilding(int minutes, ImageView buildingImage) {
         if (buildingName.equals("Jett")) {
             switch (minutes) {
                 case 0:
-                    buildingImageView.setImageResource(R.drawable.jett0);
+                    buildingImageViewId = R.drawable.jett0;
                     break;
                 case 15:
-                    buildingImageView.setImageResource(R.drawable.jett15);
+                    buildingImageViewId = R.drawable.jett15;
                     break;
                 case 60:
-                    buildingImageView.setImageResource(R.drawable.jett60);
+                    buildingImageViewId = R.drawable.jett60;
                     break;
                 case 90:
-                    buildingImageView.setImageResource(R.drawable.jett90);
+                    buildingImageViewId = R.drawable.jett90;
                     break;
                 case 120:
-                    buildingImageView.setImageResource(R.drawable.jett120);
+                    buildingImageViewId = R.drawable.jett120;
                     break;
             }
+            buildingImage.setImageResource(buildingImageViewId);
         }
     }
 }

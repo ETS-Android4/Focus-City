@@ -12,6 +12,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.icu.text.AlphabeticIndex;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.candy.focuscity.Model.RecordModel;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.concurrent.TimeUnit;
@@ -38,7 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
     private final String CHANNEL_ID = "Focus";
 
-    private static int totalBuildTime = 0;
+    private static int totalBuildTime = 15;
+
+    private DatabaseHandler db;
+    private RecordModel record;
 
     // Timer Declaration
     private enum TimerStatus {
@@ -73,9 +78,12 @@ public class MainActivity extends AppCompatActivity {
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         buttonStartStop = (Button) findViewById(R.id.startStopButton);
         buildingImage = (ImageView) findViewById(R.id.buildingImage);
+
         navView = (NavigationView) findViewById(R.id.navView);
 
-        building = new Building("Jett", buildingImage);
+        // Show Default 15 min Building on Startup
+        building = new Building("Jett", R.drawable.jett15);
+        buildingImage.setImageResource(R.drawable.jett15);
 
         // Listeners Initialisation
         buttonStartStop.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
                 startStop();
             }
         });
+
+        // Create Database to Save Data
+        db = new DatabaseHandler(getApplicationContext());
+        db.openDatabase();
 
         // Activate SeekBar Time Select
         setTimerValues();
@@ -123,7 +135,11 @@ public class MainActivity extends AppCompatActivity {
      * Wired to StartStop Button to start or stop timer
      */
     private void startStop() {
+        // Button shows BUILD
         if (timerStatus == TimerStatus.STOPPED) {
+
+            record = new RecordModel();
+            record.setDateTimeFormatted();
 
             // Countdown Timer Start Status
             timerStatus = TimerStatus.STARTED;
@@ -135,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             startCountdownTimer();
             // TODO Show Warning of Building Destruction Before Starting
 
+        // Button Shows GIVE UP
         } else {
 
             // Countdown Timer Stop Status
@@ -146,10 +163,9 @@ public class MainActivity extends AppCompatActivity {
             // Make SeekBar Editable
             seekTime.setEnabled(true);
             // TODO Change to Ruins
-            building.changeBuilding(totalBuildTime);
+            building.changeBuilding(totalBuildTime, buildingImage);
             // Shows an Unsuccessful Dialog
             createNewPopupDialog(false);
-            building.buildingImageView = buildingImage;
             // TODO Hold Button to Give up
         }
         // Initialise Progress Bar
@@ -182,8 +198,9 @@ public class MainActivity extends AppCompatActivity {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.pope6);
                     totalBuildTime = 120;
                 }
-                building.changeBuilding(totalBuildTime);
-                buildingImage = building.buildingImageView;
+
+                building.changeBuilding(totalBuildTime, buildingImage);
+
                 if (popSound != null) {
                     popSound.start();
                     popSound.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -205,19 +222,19 @@ public class MainActivity extends AppCompatActivity {
      * Method to Start Countdown
      */
     private void startCountdownTimer(){
-        building.changeBuilding(0);
+        building.changeBuilding(0, buildingImage);
         countDownTimer = new CountDownTimer(timeCountInMilliSeconds,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long elapsed = (timeCountInMilliSeconds - millisUntilFinished) / 1000 * 60; // Seconds*60 Del*60
                 if (elapsed == 15*60) {
-                    building.changeBuilding(15);
+                    building.changeBuilding(15, buildingImage);
                 } else if (elapsed == 60*60) {
-                    building.changeBuilding(60);
+                    building.changeBuilding(60, buildingImage);
                 } else if (elapsed == 90*60) {
-                    building.changeBuilding(90);
+                    building.changeBuilding(90, buildingImage);
                 } else if (elapsed == 120*60) {
-                    building.changeBuilding(120);
+                    building.changeBuilding(120, buildingImage);
                 }
                 System.out.println(elapsed); // TODO Remove Debugging
                 textViewTime.setText(msTimeFormatter(millisUntilFinished));
@@ -226,10 +243,17 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+
                 // Show Build Complete Notification
                 createNotifications();
                 // Shows a Successful Popup Dialog
                 createNewPopupDialog(true);
+
+                // Record to Database
+                record.setTotalMinutes(totalBuildTime);
+                record.setBuildingImageId(building.buildingImageViewId);
+                db.insertRecord(record);
+
                 // Reset Button Text to Build
                 buttonStartStop.setText("Build");
                 // Make SeekBar Editable
@@ -241,8 +265,8 @@ public class MainActivity extends AppCompatActivity {
                 // Reset Time TextView
                 textViewTime.setText(msTimeFormatter(timeCountInMilliSeconds));
                 // Reset Building
-                building = new Building("Jett", buildingImage);
-                building.changeBuilding(totalBuildTime);
+                building = new Building("Jett", R.drawable.jett15);
+                building.changeBuilding(totalBuildTime, buildingImage);
                 // TODO Add different Buildings
 
             }
@@ -291,8 +315,8 @@ public class MainActivity extends AppCompatActivity {
             buildSuccessText.setText("Construction Complete !!!");
         }
 
-        building.buildingImageView = popupBuildingView;
-        building.changeBuilding(totalBuildTime);
+        building.changeBuilding(totalBuildTime, buildingImage);
+        popupBuildingView.setImageResource(building.buildingImageViewId);
 
         dialogBuilder.setView(popupView);
         final AlertDialog dialog = dialogBuilder.create();

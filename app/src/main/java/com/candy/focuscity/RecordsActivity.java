@@ -20,15 +20,19 @@ public class RecordsActivity extends AppCompatActivity {
 
     private RecyclerView recordsRecyclerView;
     private RecordAdapter recordAdapter;
+    private DatabaseHandler db;
 
-    private List<RecordModel> recordList;
+    private List<RecordModel> recordsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_records);
 
-        recordList = new ArrayList<>();
+        recordsList = new ArrayList<>();
+
+        db = new DatabaseHandler(getApplicationContext());
+        db.openDatabase();
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -38,19 +42,26 @@ public class RecordsActivity extends AppCompatActivity {
         recordAdapter = new RecordAdapter(this);
         recordsRecyclerView.setAdapter(recordAdapter);
 
-        RecordModel record = new RecordModel();
-        record.setDateTimeFormatted();
-        record.setTotalMinutes(60);
-        record.setBuildingImageId(R.drawable.jett120);
-        record.setId(1);
+        //RecordModel record = new RecordModel();
+        recordsList = db.getAllRecords();
 
-        recordList.add(record);
-        recordList.add(record);
-        recordList.add(record);
-        recordList.add(record);
-        recordList.add(record);
+//        record.setDateTimeFormatted();
+//        record.setTotalMinutes(60);
+//        record.setBuildingImageId(R.drawable.jett120);
+//        record.setId(1);
+//
+//        recordList.add(record);
+//        recordList.add(record);
+//        recordList.add(record);
+//        recordList.add(record);
+//        recordList.add(record);
+//        recordList.add(record);
+//        recordList.add(record);
+//        recordList.add(record);
+//        recordList.add(record);
+//        recordList.add(record);
 
-        recordAdapter.setRecords(recordList);
+        recordAdapter.setRecords(recordsList);
     }
 
     @Override

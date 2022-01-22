@@ -37,6 +37,10 @@ public class RecordModel {
         this.dateTimeFormatted =  date.format(Calendar.getInstance().getTime());
     }
 
+    public void setDateTimeFormatted(String dateTimeFormatted) {
+        this.dateTimeFormatted = dateTimeFormatted;
+    }
+
     public int getBuildingImageId() {
         return buildingImageId;
     }

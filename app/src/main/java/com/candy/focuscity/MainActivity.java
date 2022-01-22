@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.HapticFeedbackConstants;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         building = new Building("Jett", R.drawable.jett15);
         buildingImage.setImageResource(R.drawable.jett15);
 
-        // Listeners Initialisation
+        // Button Listener
         buttonStartStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,15 +139,15 @@ public class MainActivity extends AppCompatActivity {
         // Button shows BUILD
         if (timerStatus == TimerStatus.STOPPED) {
 
+            // Record Start Time
             record = new RecordModel();
             record.setDateTimeFormatted();
-
             // Countdown Timer Start Status
             timerStatus = TimerStatus.STARTED;
             // Change Button Text
             buttonStartStop.setText("Give Up");
-            // Select Countdown Time
-            setTimerValues();
+            // Make SeekBar Editable
+            seekTime.setEnabled(false);
             // Start Countdown
             startCountdownTimer();
             // TODO Show Warning of Building Destruction Before Starting
@@ -162,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             buttonStartStop.setText("Build");
             // Make SeekBar Editable
             seekTime.setEnabled(true);
+            textViewTime.setText(totalBuildTime + ":00");
             // TODO Change to Ruins
             building.changeBuilding(totalBuildTime, buildingImage);
             // Shows an Unsuccessful Dialog
@@ -198,7 +200,6 @@ public class MainActivity extends AppCompatActivity {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.pope6);
                     totalBuildTime = 120;
                 }
-
                 building.changeBuilding(totalBuildTime, buildingImage);
 
                 if (popSound != null) {
@@ -236,6 +237,8 @@ public class MainActivity extends AppCompatActivity {
                 } else if (elapsed == 120*60) {
                     building.changeBuilding(120, buildingImage);
                 }
+                buildingImage.setImageResource(building.buildingImageViewId);
+
                 System.out.println(elapsed); // TODO Remove Debugging
                 textViewTime.setText(msTimeFormatter(millisUntilFinished));
                 progressBarCircle.setProgress((int) (millisUntilFinished/1000));

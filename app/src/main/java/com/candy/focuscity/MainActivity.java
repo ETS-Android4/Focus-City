@@ -168,6 +168,8 @@ public class MainActivity extends AppCompatActivity {
             textViewTime.setText(totalBuildTime + ":00");
             // Shows an Unsuccessful Dialog
             createNewBuildingPopupDialog(false);
+            // Reset Building to Previous Selection
+            building.changeBuilding(totalBuildTime, buildingImage);
             // TODO Hold Give Up Warning Dialog
         }
         // Initialise Progress Bar

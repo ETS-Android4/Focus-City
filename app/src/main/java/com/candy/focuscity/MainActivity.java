@@ -12,14 +12,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.icu.text.AlphabeticIndex;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.HapticFeedbackConstants;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -41,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String CHANNEL_ID = "Focus";
 
-    private static int totalBuildTime = 15;
+    protected static int totalBuildTime = 15;
 
     private DatabaseHandler db;
     private RecordModel record;
@@ -59,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBarCircle;
     private TextView textViewTime;
     private Button buttonStartStop;
-    private ImageView buildingImage;
-    private Building building;
+    protected ImageView buildingImage;
+    protected Building building;
     private long timeCountInMilliSeconds = (15 * 1 * 60000) / 60; // Minutes-Seconds for Testing
 
     // Drawer Layout
@@ -155,6 +153,10 @@ public class MainActivity extends AppCompatActivity {
         // Button Shows GIVE UP
         } else {
 
+            // Add Failed Build to Records
+            record.setTotalMinutes(0);
+            record.setBuildingImageId(R.drawable.jettruins);
+            db.insertRecord(record);
             // Countdown Timer Stop Status
             timerStatus = TimerStatus.STOPPED;
             // Stop Countdown Timer
@@ -164,11 +166,9 @@ public class MainActivity extends AppCompatActivity {
             // Make SeekBar Editable
             seekTime.setEnabled(true);
             textViewTime.setText(totalBuildTime + ":00");
-            // TODO Change to Ruins
-            building.changeBuilding(totalBuildTime, buildingImage);
             // Shows an Unsuccessful Dialog
-            createNewPopupDialog(false);
-            // TODO Hold Button to Give up
+            createNewBuildingPopupDialog(false);
+            // TODO Hold Give Up Warning Dialog
         }
         // Initialise Progress Bar
         setProgressBarValues();
@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 seekTime.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 MediaPlayer popSound = null;
 
+                // TODO Add animations
                 if (selectedTime < 60) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.pope5);
                     totalBuildTime = 15;
@@ -250,8 +251,7 @@ public class MainActivity extends AppCompatActivity {
                 // Show Build Complete Notification
                 createNotifications();
                 // Shows a Successful Popup Dialog
-                createNewPopupDialog(true);
-
+                createNewBuildingPopupDialog(true);
                 // Record to Database
                 record.setTotalMinutes(totalBuildTime);
                 record.setBuildingImageId(building.buildingImageViewId);
@@ -299,27 +299,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Create a Popup window on build success
+     * Create a Popup window on Build Success
      */
-    private void createNewPopupDialog(boolean success) {
+    public void createNewBuildingPopupDialog(boolean success) {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         ImageView popupBuildingView;
         TextView buildSuccessText;
         Button closeButton;
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popup, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.building_popup, null);
         popupBuildingView = (ImageView) popupView.findViewById(R.id.popupBuildingView);
         closeButton = (Button) popupView.findViewById(R.id.closeButton);
         buildSuccessText = (TextView) popupView.findViewById(R.id.buildSuccessText);
 
         if (!success) {
             buildSuccessText.setText("Construction Failed :(");
+            popupBuildingView.setImageResource(R.drawable.jettruins);
         } else {
             buildSuccessText.setText("Construction Complete !!!");
+            building.changeBuilding(totalBuildTime, buildingImage);
+            popupBuildingView.setImageResource(building.buildingImageViewId);
         }
-
-        building.changeBuilding(totalBuildTime, buildingImage);
-        popupBuildingView.setImageResource(building.buildingImageViewId);
 
         dialogBuilder.setView(popupView);
         final AlertDialog dialog = dialogBuilder.create();

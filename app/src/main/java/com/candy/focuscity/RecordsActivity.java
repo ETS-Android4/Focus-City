@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.candy.focuscity.Adapter.RecordAdapter;
@@ -21,6 +23,7 @@ public class RecordsActivity extends AppCompatActivity {
     private RecyclerView recordsRecyclerView;
     private RecordAdapter recordAdapter;
     private DatabaseHandler db;
+    private TextView textViewWhenEmpty;
 
     private List<RecordModel> recordsList;
 
@@ -30,6 +33,7 @@ public class RecordsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_records);
 
         recordsList = new ArrayList<>();
+        textViewWhenEmpty = (TextView) findViewById(R.id.textViewWhenEmpty);
 
         db = new DatabaseHandler(getApplicationContext());
         db.openDatabase();
@@ -42,26 +46,14 @@ public class RecordsActivity extends AppCompatActivity {
         recordAdapter = new RecordAdapter(this);
         recordsRecyclerView.setAdapter(recordAdapter);
 
-        //RecordModel record = new RecordModel();
         recordsList = db.getAllRecords();
-
-//        record.setDateTimeFormatted();
-//        record.setTotalMinutes(60);
-//        record.setBuildingImageId(R.drawable.jett120);
-//        record.setId(1);
-//
-//        recordList.add(record);
-//        recordList.add(record);
-//        recordList.add(record);
-//        recordList.add(record);
-//        recordList.add(record);
-//        recordList.add(record);
-//        recordList.add(record);
-//        recordList.add(record);
-//        recordList.add(record);
-//        recordList.add(record);
-
         recordAdapter.setRecords(recordsList);
+
+        // Show Empty Records Hint when Records is Empty
+        if (!recordsList.isEmpty()) {
+            textViewWhenEmpty.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     @Override

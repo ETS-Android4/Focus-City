@@ -32,10 +32,6 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         RecordModel item = recordList.get(position);
         holder.recordsBuildingImage.setImageResource(item.getBuildingImageId());
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        System.out.println(item.getBuildingImageId());
-        System.out.println(R.drawable.jett15);
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         holder.recordsDateTime.setText(item.getDateTimeFormatted());
         holder.recordsTotalMinutes.setText(String.format("%d\n"+"Mins", item.getTotalMinutes()));
     }

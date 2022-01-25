@@ -6,22 +6,29 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.CycleInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText buildingNameEdit;
     private TextView buildingNameText;
     private ImageView editNameButton;
-    private String buildingName;
+    private String buildingName = "";
 
     private Button buttonStartStop;
     protected ImageView buildingImage;
@@ -103,7 +110,16 @@ public class MainActivity extends AppCompatActivity {
         buttonStartStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startStop();
+                buildingName = buildingNameEdit.getText().toString();
+                if (!buildingName.isEmpty()) {
+                    startStop();
+                } else {
+                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(200);
+                    buildingNameEdit.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                    buildingNameEdit.setHintTextColor(getResources().getColor(R.color.colorRed));
+                    buildingNameEdit.startAnimation(shakeError());
+                }
             }
         });
 
@@ -425,12 +441,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void confirmBuildingName() {
+        buildingNameEdit.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.purple_dark)));
+        buildingNameEdit.setHintTextColor(getResources().getColor(R.color.purple_dark));
         buildingNameEdit.setEnabled(false);
         buildingNameEdit.setVisibility(View.INVISIBLE);
         buildingName = buildingNameEdit.getText().toString();
         buildingNameText.setText(buildingName);
         buildingNameText.setVisibility(View.VISIBLE);
         editNameButton.setVisibility(View.VISIBLE);
+    }
+
+    private TranslateAnimation shakeError() {
+        TranslateAnimation shake = new TranslateAnimation(0, 20, 0, 0);
+        shake.setDuration(500);
+        shake.setInterpolator(new CycleInterpolator(7));
+        return shake;
     }
 
 }

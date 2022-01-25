@@ -31,7 +31,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="15"
-                android:textColor="#FFEE58" />
+                android:textColor="#FDD835" />
 
             <TextView
                 android:layout_width="0dp"
@@ -46,7 +46,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="60"
-                android:textColor="#FFA726" />
+                android:textColor="#FB8C00" />
 
             <TextView
                 android:layout_width="0dp"
@@ -54,7 +54,7 @@
                 android:layout_weight="3"
                 android:gravity="center"
                 android:text="90"
-                android:textColor="#FF7043" />
+                android:textColor="#F4511E" />
 
             <TextView
                 android:layout_width="0dp"
@@ -62,7 +62,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="120"
-                android:textColor="#EC407A" />
+                android:textColor="#D81B60" />
         </LinearLayout>
 
         <SeekBar

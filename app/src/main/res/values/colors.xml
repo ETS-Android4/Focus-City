@@ -14,4 +14,6 @@
     <color name="colorBackground">#151B29</color>
     <color name="colorPink">#E91E63</color>
     <color name="colorLightPink">#F48FB1</color>
+    <color name="colorRed">#D32F2F</color>
+
 </resources>

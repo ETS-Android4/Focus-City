@@ -16,7 +16,7 @@ public class Building extends MainActivity {
         if (buildingName.equals("Jett")) {
             switch (minutes) {
                 case 0:
-                    buildingImageViewId = R.drawable.jett0;
+                    buildingImageViewId = R.drawable.building_ground;
                     break;
                 case 15:
                     buildingImageViewId = R.drawable.jett15;

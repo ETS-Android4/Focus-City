@@ -12,14 +12,19 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.HapticFeedbackConstants;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -56,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar seekTime;
     private ProgressBar progressBarCircle;
     private TextView textViewTime;
+
+    private EditText buildingNameEdit;
+    private TextView buildingNameText;
+    private ImageView editNameButton;
+
     private Button buttonStartStop;
     protected ImageView buildingImage;
     protected Building building;
@@ -78,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
         buttonStartStop = (Button) findViewById(R.id.startStopButton);
         buildingImage = (ImageView) findViewById(R.id.buildingImage);
 
+        buildingNameEdit = (EditText) findViewById(R.id.buildingNameEdit);
+        buildingNameText = (TextView) findViewById(R.id.buildingNameText);
+        editNameButton = (ImageView) findViewById(R.id.editNameButton);
+
         navView = (NavigationView) findViewById(R.id.navView);
 
         // Show Default 15 min Building on Startup
@@ -89,6 +103,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startStop();
+            }
+        });
+
+        // EditText Listener
+        buildingNameEdit.setOnEditorActionListener(new android.widget.TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    buildingNameEdit.setEnabled(false);
+                    buildingNameEdit.setVisibility(View.INVISIBLE);
+                    buildingNameText.setText(buildingNameEdit.getText());
+                    buildingNameText.setVisibility(View.VISIBLE);
+                    editNameButton.setVisibility(View.VISIBLE);
+                }
+                return true;
+            }
+        });
+
+        editNameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buildingNameText.setVisibility(View.INVISIBLE);
+                buildingNameEdit.setEnabled(true);
+                buildingNameEdit.setVisibility(View.VISIBLE);
+                editNameButton.setVisibility(View.GONE);
             }
         });
 
@@ -155,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Add Failed Build to Records
             record.setTotalMinutes(0);
-            record.setBuildingImageId(R.drawable.jettruins);
+            record.setBuildingImageId(R.drawable.jett_ruins);
             db.insertRecord(record);
             // Countdown Timer Stop Status
             timerStatus = TimerStatus.STOPPED;
@@ -309,14 +347,14 @@ public class MainActivity extends AppCompatActivity {
         TextView buildSuccessText;
         Button closeButton;
 
-        final View popupView = getLayoutInflater().inflate(R.layout.building_popup, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.building_popup_layout, null);
         popupBuildingView = (ImageView) popupView.findViewById(R.id.popupBuildingView);
         closeButton = (Button) popupView.findViewById(R.id.closeButton);
         buildSuccessText = (TextView) popupView.findViewById(R.id.buildSuccessText);
 
         if (!success) {
             buildSuccessText.setText("Construction Failed :(");
-            popupBuildingView.setImageResource(R.drawable.jettruins);
+            popupBuildingView.setImageResource(R.drawable.jett_ruins);
         } else {
             buildSuccessText.setText("Construction Complete !!!");
             building.changeBuilding(totalBuildTime, buildingImage);
@@ -325,6 +363,8 @@ public class MainActivity extends AppCompatActivity {
 
         dialogBuilder.setView(popupView);
         final AlertDialog dialog = dialogBuilder.create();
+        // Rounded Corners
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
 
         closeButton.setOnClickListener(new View.OnClickListener() {

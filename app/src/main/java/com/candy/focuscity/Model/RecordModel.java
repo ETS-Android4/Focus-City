@@ -12,6 +12,15 @@ public class RecordModel {
     private String dateTimeFormatted;
     private int buildingImageId;
     private int totalMinutes;
+    private String buildingName;
+
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
+    }
 
     public int getTotalMinutes() {
         return totalMinutes;

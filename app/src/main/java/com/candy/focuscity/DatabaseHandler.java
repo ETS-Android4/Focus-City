@@ -20,10 +20,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String ID = "id";
     private static final String DATE_TIME = "dateTime";
     private static final String BUILDING_IMAGE_ID = "buildingImageId";
+    private static final String BUILDING_NAME = "buildingName";
     private static final String TOTAL_MINUTES = "totalMinutes";
     private static final String CREATE_RECORDS_TABLE = "CREATE TABLE " + RECORDS_TABLE +
             "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + BUILDING_IMAGE_ID + " INTEGER, " +
-            DATE_TIME + " TEXT, " + TOTAL_MINUTES + " INTEGER)";
+            BUILDING_NAME + " TEXT, " + DATE_TIME + " TEXT, " + TOTAL_MINUTES + " INTEGER)";
 
     private SQLiteDatabase db;
 
@@ -51,6 +52,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void insertRecord(RecordModel record) {
         ContentValues cv = new ContentValues();
         cv.put(BUILDING_IMAGE_ID, record.getBuildingImageId());
+        cv.put(BUILDING_NAME, record.getBuildingName());
         cv.put(DATE_TIME, record.getDateTimeFormatted());
         cv.put(TOTAL_MINUTES, record.getTotalMinutes());
         db.insert(RECORDS_TABLE, null, cv);
@@ -69,6 +71,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         RecordModel record = new RecordModel();
                         record.setId(cur.getInt(cur.getColumnIndex(ID)));
                         record.setBuildingImageId(cur.getInt(cur.getColumnIndex(BUILDING_IMAGE_ID)));
+                        record.setBuildingName(cur.getString(cur.getColumnIndex(BUILDING_NAME)));
                         record.setDateTimeFormatted(cur.getString(cur.getColumnIndex(DATE_TIME)));
                         record.setTotalMinutes(cur.getInt(cur.getColumnIndex(TOTAL_MINUTES)));
                         recordsList.add(record);

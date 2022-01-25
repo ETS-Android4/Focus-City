@@ -31,15 +31,14 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="15"
-                android:textColor="@color/colorPink" />
+                android:textColor="#FFEE58" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text=""
-                android:textColor="@color/colorPink" />
+                android:text="" />
 
             <TextView
                 android:layout_width="0dp"
@@ -47,7 +46,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="60"
-                android:textColor="@color/colorPink" />
+                android:textColor="#FFA726" />
 
             <TextView
                 android:layout_width="0dp"
@@ -55,7 +54,7 @@
                 android:layout_weight="3"
                 android:gravity="center"
                 android:text="90"
-                android:textColor="@color/colorPink" />
+                android:textColor="#FF7043" />
 
             <TextView
                 android:layout_width="0dp"
@@ -63,7 +62,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="120"
-                android:textColor="@color/colorPink" />
+                android:textColor="#EC407A" />
         </LinearLayout>
 
         <SeekBar
@@ -111,7 +110,7 @@
             android:layout_height="45dp"
             android:backgroundTint="@color/purple_dark"
             android:gravity="bottom|center_horizontal"
-            android:hint="Enter Building Name"
+            android:hint="Enter Task Name"
             android:textColor="#B39DDB"
             android:textColorHint="#8068A8"
             android:textSize="18dp"
@@ -187,6 +186,7 @@
             android:paddingRight="25dp"
             android:paddingBottom="12dp"
             android:text="Build"
+            android:textStyle="bold"
             app:cornerRadius="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

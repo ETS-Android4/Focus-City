@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText buildingNameEdit;
     private TextView buildingNameText;
     private ImageView editNameButton;
+    private String buildingName;
 
     private Button buttonStartStop;
     protected ImageView buildingImage;
@@ -110,11 +111,7 @@ public class MainActivity extends AppCompatActivity {
         buildingNameEdit.setOnEditorActionListener(new android.widget.TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    buildingNameEdit.setEnabled(false);
-                    buildingNameEdit.setVisibility(View.INVISIBLE);
-                    buildingNameText.setText(buildingNameEdit.getText());
-                    buildingNameText.setVisibility(View.VISIBLE);
-                    editNameButton.setVisibility(View.VISIBLE);
+                    confirmBuildingName();
                 }
                 return true;
             }
@@ -123,10 +120,7 @@ public class MainActivity extends AppCompatActivity {
         editNameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buildingNameText.setVisibility(View.INVISIBLE);
-                buildingNameEdit.setEnabled(true);
-                buildingNameEdit.setVisibility(View.VISIBLE);
-                editNameButton.setVisibility(View.GONE);
+               resetBuildingName();
             }
         });
 
@@ -175,9 +169,13 @@ public class MainActivity extends AppCompatActivity {
         // Button shows BUILD
         if (timerStatus == TimerStatus.STOPPED) {
 
+            confirmBuildingName();
+            editNameButton.setVisibility(View.GONE);
+
             // Record Start Time
             record = new RecordModel();
             record.setDateTimeFormatted();
+            record.setBuildingName(buildingName);
             // Countdown Timer Start Status
             timerStatus = TimerStatus.STARTED;
             // Change Button Text
@@ -190,6 +188,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Button Shows GIVE UP
         } else {
+
+            resetBuildingName();
+            buildingNameEdit.getText().clear();
 
             // Add Failed Build to Records
             record.setTotalMinutes(0);
@@ -287,6 +288,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+
+                resetBuildingName();
+                buildingNameEdit.getText().clear();
 
                 // Show Build Complete Notification
                 createNotifications();
@@ -410,6 +414,23 @@ public class MainActivity extends AppCompatActivity {
                 NotificationManagerCompat.from(getApplicationContext());
 
         notificationManager.notify(100, builder.build());
+    }
+
+    private void resetBuildingName() {
+        buildingName = "";
+        buildingNameText.setVisibility(View.INVISIBLE);
+        buildingNameEdit.setEnabled(true);
+        buildingNameEdit.setVisibility(View.VISIBLE);
+        editNameButton.setVisibility(View.GONE);
+    }
+
+    private void confirmBuildingName() {
+        buildingNameEdit.setEnabled(false);
+        buildingNameEdit.setVisibility(View.INVISIBLE);
+        buildingName = buildingNameEdit.getText().toString();
+        buildingNameText.setText(buildingName);
+        buildingNameText.setVisibility(View.VISIBLE);
+        editNameButton.setVisibility(View.VISIBLE);
     }
 
 }

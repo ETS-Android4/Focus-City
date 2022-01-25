@@ -32,6 +32,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         RecordModel item = recordList.get(position);
         holder.recordsBuildingImage.setImageResource(item.getBuildingImageId());
+        holder.recordsBuildingName.setText(item.getBuildingName());
         holder.recordsDateTime.setText(item.getDateTimeFormatted());
         holder.recordsTotalMinutes.setText(String.format("%d\n"+"Mins", item.getTotalMinutes()));
     }
@@ -48,12 +49,14 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView recordsBuildingImage;
+        TextView recordsBuildingName;
         TextView recordsDateTime;
         TextView recordsTotalMinutes;
 
         ViewHolder(View view) {
             super(view);
             recordsBuildingImage = view.findViewById(R.id.recordsBuildingImage);
+            recordsBuildingName = view.findViewById(R.id.recordsBuildingName);
             recordsDateTime = view.findViewById(R.id.recordsDateTime);
             recordsTotalMinutes = view.findViewById(R.id.recordsTotalMinutes);
         }

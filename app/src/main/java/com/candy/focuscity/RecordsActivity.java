@@ -6,13 +6,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.candy.focuscity.Adapter.RecordAdapter;
+import com.candy.focuscity.DatabaseHandlers.RecordsDatabaseHandler;
 import com.candy.focuscity.Model.RecordModel;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class RecordsActivity extends AppCompatActivity {
 
     private RecyclerView recordsRecyclerView;
     private RecordAdapter recordAdapter;
-    private DatabaseHandler db;
+    private RecordsDatabaseHandler db;
     private TextView textViewWhenEmpty;
 
     private List<RecordModel> recordsList;
@@ -35,7 +34,7 @@ public class RecordsActivity extends AppCompatActivity {
         recordsList = new ArrayList<>();
         textViewWhenEmpty = (TextView) findViewById(R.id.textViewWhenEmpty);
 
-        db = new DatabaseHandler(getApplicationContext());
+        db = new RecordsDatabaseHandler(getApplicationContext());
         db.openDatabase();
 
         ActionBar actionBar = getSupportActionBar();

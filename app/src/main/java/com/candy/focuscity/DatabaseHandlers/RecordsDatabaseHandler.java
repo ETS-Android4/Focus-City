@@ -1,4 +1,4 @@
-package com.candy.focuscity;
+package com.candy.focuscity.DatabaseHandlers;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -12,7 +12,7 @@ import com.candy.focuscity.Model.RecordModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseHandler extends SQLiteOpenHelper {
+public class RecordsDatabaseHandler extends SQLiteOpenHelper {
 
     private static final int VERSION = 1;
     private static final String NAME = "recordsDatabase";
@@ -28,7 +28,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private SQLiteDatabase db;
 
-    public DatabaseHandler(Context context) {
+    public RecordsDatabaseHandler(Context context) {
         super(context, NAME, null, VERSION);
     }
 

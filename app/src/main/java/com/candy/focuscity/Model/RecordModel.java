@@ -1,7 +1,5 @@
 package com.candy.focuscity.Model;
 
-import android.widget.ImageView;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

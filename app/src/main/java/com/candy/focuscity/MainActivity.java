@@ -35,6 +35,9 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.candy.focuscity.DatabaseHandlers.BlueprintsDatabaseHandler;
+import com.candy.focuscity.DatabaseHandlers.RecordsDatabaseHandler;
+import com.candy.focuscity.Model.BlueprintModel;
 import com.candy.focuscity.Model.RecordModel;
 import com.google.android.material.navigation.NavigationView;
 
@@ -51,8 +54,10 @@ public class MainActivity extends AppCompatActivity {
 
     protected static int totalBuildTime = 15;
 
-    private DatabaseHandler db;
+    private RecordsDatabaseHandler dbRecords;
     private RecordModel record;
+    private BlueprintsDatabaseHandler dbBlueprints;
+    private BlueprintModel blueprint;
 
     // Timer Declaration
     private enum TimerStatus {
@@ -73,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
     private String buildingName = "";
 
     private Button buttonStartStop;
+    private Button buttonSave;
+
     protected ImageView buildingImage;
     protected Building building;
     private long timeCountInMilliSeconds = (15 * 1 * 60000) / 60; // Minutes-Seconds for Testing
@@ -91,7 +98,10 @@ public class MainActivity extends AppCompatActivity {
         seekTime = (SeekBar) findViewById(R.id.seekBarTimeSelect);
         progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
+
         buttonStartStop = (Button) findViewById(R.id.startStopButton);
+        buttonSave = (Button) findViewById(R.id.saveButton);
+
         buildingImage = (ImageView) findViewById(R.id.buildingImage);
 
         buildingNameEdit = (EditText) findViewById(R.id.buildingNameEdit);
@@ -111,6 +121,23 @@ public class MainActivity extends AppCompatActivity {
                 buildingName = buildingNameEdit.getText().toString();
                 if (!buildingName.isEmpty()) {
                     startStop();
+                } else {
+                    // TODO change to Vibrator method
+                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(200);
+                    buildingNameEdit.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                    buildingNameEdit.setHintTextColor(getResources().getColor(R.color.colorRed));
+                    buildingNameEdit.startAnimation(shakeError());
+                }
+            }
+        });
+
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buildingName = buildingNameEdit.getText().toString();
+                if (!buildingName.isEmpty()) {
+                    saveBlueprint();
                 } else {
                     Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(200);
@@ -138,9 +165,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // TODO Convert to Method
         // Create Database to Save Data
-        db = new DatabaseHandler(getApplicationContext());
-        db.openDatabase();
+        dbRecords = new RecordsDatabaseHandler(getApplicationContext());
+        dbRecords.openDatabase();
+        dbBlueprints = new BlueprintsDatabaseHandler(getApplicationContext());
+        dbBlueprints.openDatabase();
 
         // Activate SeekBar Time Select
         setTimerValues();
@@ -158,6 +188,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
+                if (id == R.id.blueprintsPage){
+                    Intent buildIntent = new Intent(getApplicationContext(), BlueprintActivity.class);
+                    startActivity(buildIntent);
+                    drawerLayout.closeDrawers();
+                }
                 if (id == R.id.recordsPage){
                     Intent buildIntent = new Intent(getApplicationContext(), RecordsActivity.class);
                     startActivity(buildIntent);
@@ -174,6 +209,17 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void saveBlueprint() {
+        blueprint = new BlueprintModel();
+        blueprint.setBuildingName(buildingName);
+        blueprint.setTotalMinutes(totalBuildTime);
+        blueprint.setBuildingImageId(building.buildingImageViewId);
+        dbBlueprints.insertBlueprint(blueprint);
+        resetBuildingName();
+        // TODO Show saved Toast
+
     }
 
     /**
@@ -209,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
             // Add Failed Build to Records
             record.setTotalMinutes(0);
             record.setBuildingImageId(R.drawable.jett_ruins);
-            db.insertRecord(record);
+            dbRecords.insertRecord(record);
             // Countdown Timer Stop Status
             timerStatus = TimerStatus.STOPPED;
             // Stop Countdown Timer
@@ -304,7 +350,6 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
 
                 resetBuildingName();
-                buildingNameEdit.getText().clear();
 
                 // Show Build Complete Notification
                 createNotifications();
@@ -313,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
                 // Record to Database
                 record.setTotalMinutes(totalBuildTime);
                 record.setBuildingImageId(building.buildingImageViewId);
-                db.insertRecord(record);
+                dbRecords.insertRecord(record);
 
                 // Reset Button Text to Build
                 buttonStartStop.setText("Build");
@@ -436,6 +481,7 @@ public class MainActivity extends AppCompatActivity {
         buildingNameEdit.setEnabled(true);
         buildingNameEdit.setVisibility(View.VISIBLE);
         editNameButton.setVisibility(View.GONE);
+        buildingNameEdit.getText().clear();
     }
 
     private void confirmBuildingName() {

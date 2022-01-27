@@ -51,6 +51,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class MainActivity extends AppCompatActivity {
 
+    // TODO In app TimeScale Adjust
+    private final int TIME_SCALE = 1; // Time scale control: 1 for Minutes, 60 for Seconds
+
     private final String CHANNEL_ID = "Focus";
 
     protected static int totalBuildTime = 15;
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected ImageView buildingImage;
     protected Building building;
-    private long timeCountInMilliSeconds = (15 * 1 * 60000) / 60; // Minutes-Seconds for Testing
+    private long timeCountInMilliSeconds = (15 * 1 * 60000) / TIME_SCALE; // Minutes-Seconds for Testing
 
     // Drawer Layout
     private ActionBarDrawerToggle toggle;
@@ -122,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             totalBuildTime = extras.getInt("totalMinutes");
             buildingImage.setImageResource(extras.getInt("buildingId"));
             textViewTime.setText(totalBuildTime + ":00");
-            timeCountInMilliSeconds = (totalBuildTime * 1000 * 60) / 60;
+            timeCountInMilliSeconds = (totalBuildTime * 1000 * 60) / TIME_SCALE;
             int progress = totalBuildTime/15;
             seekTime.setProgress(progress-1);
             confirmBuildingName();
@@ -138,12 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!buildingName.isEmpty()) {
                     startStop();
                 } else {
-                    // TODO change to Vibrator method
-                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    vibrator.vibrate(200);
-                    buildingNameEdit.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
-                    buildingNameEdit.setHintTextColor(getResources().getColor(R.color.colorRed));
-                    buildingNameEdit.startAnimation(shakeError());
+                    errorVibrate();
                 }
             }
         });
@@ -151,16 +149,14 @@ public class MainActivity extends AppCompatActivity {
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buildingName = buildingNameEdit.getText().toString();
+                if (buildingName.isEmpty()) {
+                    buildingName = buildingNameEdit.getText().toString();
+                }
                 if (!buildingName.isEmpty()) {
                     saveBlueprint();
                     buildingNameEdit.getText().clear();
                 } else {
-                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    vibrator.vibrate(200);
-                    buildingNameEdit.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
-                    buildingNameEdit.setHintTextColor(getResources().getColor(R.color.colorRed));
-                    buildingNameEdit.startAnimation(shakeError());
+                    errorVibrate();
                 }
             }
         });
@@ -184,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // TODO Convert to Method
         // Create Database to Save Data
         dbRecords = new RecordsDatabaseHandler(getApplicationContext());
         dbRecords.openDatabase();
@@ -208,9 +203,15 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.blueprintsPage){
-                    Intent buildIntent = new Intent(getApplicationContext(), BlueprintActivity.class);
-                    startActivity(buildIntent);
-                    drawerLayout.closeDrawers();
+                    // Disable Blueprints Page when Timer is Running
+                    if (timerStatus == TimerStatus.STOPPED) {
+                        Intent buildIntent = new Intent(getApplicationContext(), BlueprintActivity.class);
+                        startActivity(buildIntent);
+                        drawerLayout.closeDrawers();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Construction Underway",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
                 if (id == R.id.recordsPage){
                     Intent buildIntent = new Intent(getApplicationContext(), RecordsActivity.class);
@@ -237,8 +238,8 @@ public class MainActivity extends AppCompatActivity {
         blueprint.setBuildingImageId(building.buildingImageViewId);
         dbBlueprints.insertBlueprint(blueprint);
         resetBuildingName();
-        // TODO Show saved Toast
-
+        Toast.makeText(getApplicationContext(), "Saved to Blueprints",
+                Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -250,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
             confirmBuildingName();
             editNameButton.setVisibility(View.GONE);
+            buttonSave.setEnabled(false);
 
             // Record Start Time
             record = new RecordModel();
@@ -270,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
 
             resetBuildingName();
             buildingNameEdit.getText().clear();
+            buttonSave.setEnabled(true);
 
             // Add Failed Build to Records
             record.setTotalMinutes(0);
@@ -328,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
                 textViewTime.setText(selectedTime + ":00");
-                timeCountInMilliSeconds = (selectedTime * 1000 * 60) / 60; // Minutes-Seconds (Del/60)
+                timeCountInMilliSeconds = (selectedTime * 1000 * 60) / TIME_SCALE; // Minutes-Seconds (Del/60)
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {};
@@ -345,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         countDownTimer = new CountDownTimer(timeCountInMilliSeconds,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                long elapsed = (timeCountInMilliSeconds - millisUntilFinished) / 1000 * 60; // Seconds*60 Del*60
+                long elapsed = (timeCountInMilliSeconds - millisUntilFinished) / 1000 * TIME_SCALE; // Seconds*60 Del*60
                 if (elapsed == 15*60) {
                     building.changeBuilding(15, buildingImage);
                 } else if (elapsed == 60*60) {
@@ -366,6 +369,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
 
                 resetBuildingName();
+                buttonSave.setEnabled(true);
 
                 // Show Build Complete Notification
                 createNotifications();
@@ -509,7 +513,15 @@ public class MainActivity extends AppCompatActivity {
         editNameButton.setVisibility(View.VISIBLE);
     }
 
-    private TranslateAnimation shakeError() {
+    private void errorVibrate() {
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(200);
+        buildingNameEdit.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+        buildingNameEdit.setHintTextColor(getResources().getColor(R.color.colorRed));
+        buildingNameEdit.startAnimation(errorAnimation());
+    }
+
+    private TranslateAnimation errorAnimation() {
         TranslateAnimation shake = new TranslateAnimation(0, 20, 0, 0);
         shake.setDuration(500);
         shake.setInterpolator(new CycleInterpolator(7));

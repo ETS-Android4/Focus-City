@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.candy.focuscity.DatabaseHandlers.BlueprintsDatabaseHandler;
 import com.candy.focuscity.DatabaseHandlers.RecordsDatabaseHandler;
@@ -114,11 +115,26 @@ public class MainActivity extends AppCompatActivity {
         building = new Building("Jett", R.drawable.jett15);
         buildingImage.setImageResource(R.drawable.jett15);
 
-        // Button Listener
+        // Insert Blueprint Data if Present
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            buildingName = extras.getString("taskName");
+            totalBuildTime = extras.getInt("totalMinutes");
+            buildingImage.setImageResource(extras.getInt("buildingId"));
+            textViewTime.setText(totalBuildTime + ":00");
+            timeCountInMilliSeconds = (totalBuildTime * 1000 * 60) / 60;
+            int progress = totalBuildTime/15;
+            seekTime.setProgress(progress-1);
+            confirmBuildingName();
+        }
+
+        // Button Listeners
         buttonStartStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buildingName = buildingNameEdit.getText().toString();
+                if (buildingName.isEmpty()) {
+                    buildingName = buildingNameEdit.getText().toString();
+                }
                 if (!buildingName.isEmpty()) {
                     startStop();
                 } else {
@@ -138,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 buildingName = buildingNameEdit.getText().toString();
                 if (!buildingName.isEmpty()) {
                     saveBlueprint();
+                    buildingNameEdit.getText().clear();
                 } else {
                     Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(200);
@@ -152,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
         buildingNameEdit.setOnEditorActionListener(new android.widget.TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    buildingName = buildingNameEdit.getText().toString();
                     confirmBuildingName();
                 }
                 return true;
@@ -162,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                resetBuildingName();
+               buildingName = buildingNameEdit.getText().toString();
             }
         });
 
@@ -291,17 +310,14 @@ public class MainActivity extends AppCompatActivity {
                 // TODO Add animations
                 if (selectedTime < 60) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.pope5);
-                    totalBuildTime = 15;
                 } else if (selectedTime < 90) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.popg5);
-                    totalBuildTime = 60;
                 } else if (selectedTime < 120) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.popc6);
-                    totalBuildTime = 90;
                 } else if (selectedTime == 120) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.pope6);
-                    totalBuildTime = 120;
                 }
+                totalBuildTime = selectedTime;
                 building.changeBuilding(totalBuildTime, buildingImage);
 
                 if (popSound != null) {
@@ -481,7 +497,6 @@ public class MainActivity extends AppCompatActivity {
         buildingNameEdit.setEnabled(true);
         buildingNameEdit.setVisibility(View.VISIBLE);
         editNameButton.setVisibility(View.GONE);
-        buildingNameEdit.getText().clear();
     }
 
     private void confirmBuildingName() {
@@ -489,7 +504,6 @@ public class MainActivity extends AppCompatActivity {
         buildingNameEdit.setHintTextColor(getResources().getColor(R.color.purple_dark));
         buildingNameEdit.setEnabled(false);
         buildingNameEdit.setVisibility(View.INVISIBLE);
-        buildingName = buildingNameEdit.getText().toString();
         buildingNameText.setText(buildingName);
         buildingNameText.setVisibility(View.VISIBLE);
         editNameButton.setVisibility(View.VISIBLE);

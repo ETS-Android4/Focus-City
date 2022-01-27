@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.candy.focuscity.Adapter.BlueprintAdapter;
 import com.candy.focuscity.Adapter.RecordAdapter;
@@ -29,6 +31,8 @@ public class BlueprintActivity extends AppCompatActivity {
     private BlueprintsDatabaseHandler db;
     private TextView textViewWhenEmpty;
 
+    private Button buildButton;
+
     private List<BlueprintModel> blueprintsList;
 
     @Override
@@ -38,6 +42,7 @@ public class BlueprintActivity extends AppCompatActivity {
 
         blueprintsList = new ArrayList<>();
         textViewWhenEmpty = (TextView) findViewById(R.id.blueprintTextViewWhenEmpty);
+        buildButton = (Button) findViewById(R.id.blueprintBuildButton);
 
         db = new BlueprintsDatabaseHandler(getApplicationContext());
         db.openDatabase();
@@ -47,7 +52,7 @@ public class BlueprintActivity extends AppCompatActivity {
 
         blueprintRecyclerView = (RecyclerView) findViewById(R.id.blueprintsRecyclerView);
         blueprintRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        blueprintAdapter = new BlueprintAdapter(this);
+        blueprintAdapter = new BlueprintAdapter(BlueprintActivity.this);
         blueprintRecyclerView.setAdapter(blueprintAdapter);
 
         blueprintsList = db.getAllBlueprints();

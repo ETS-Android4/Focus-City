@@ -14,23 +14,19 @@ public class Building extends MainActivity {
 
     public void changeBuilding(int minutes, ImageView buildingImage) {
         if (buildingName.equals("Jett")) {
-            switch (minutes) {
-                case 0:
-                    buildingImageViewId = R.drawable.building_ground;
-                    break;
-                case 15:
-                    buildingImageViewId = R.drawable.jett15;
-                    break;
-                case 60:
-                    buildingImageViewId = R.drawable.jett60;
-                    break;
-                case 90:
-                    buildingImageViewId = R.drawable.jett90;
-                    break;
-                case 120:
-                    buildingImageViewId = R.drawable.jett120;
-                    break;
+
+            if (minutes == 0) {
+                buildingImageViewId = R.drawable.building_ground;
+            } else if (minutes < 60) {
+                buildingImageViewId = R.drawable.jett15;
+            } else if (minutes < 90) {
+                buildingImageViewId = R.drawable.jett60;
+            } else if (minutes < 120) {
+                buildingImageViewId = R.drawable.jett90;
+            } else if (minutes == 120) {
+                buildingImageViewId = R.drawable.jett120;
             }
+
             buildingImage.setImageResource(buildingImageViewId);
         }
     }

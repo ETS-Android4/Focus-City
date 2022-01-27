@@ -119,17 +119,7 @@ public class MainActivity extends AppCompatActivity {
         buildingImage.setImageResource(R.drawable.jett15);
 
         // Insert Blueprint Data if Present
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            buildingName = extras.getString("taskName");
-            totalBuildTime = extras.getInt("totalMinutes");
-            buildingImage.setImageResource(extras.getInt("buildingId"));
-            textViewTime.setText(totalBuildTime + ":00");
-            timeCountInMilliSeconds = (totalBuildTime * 1000 * 60) / TIME_SCALE;
-            int progress = totalBuildTime/15;
-            seekTime.setProgress(progress-1);
-            confirmBuildingName();
-        }
+        blueprintTransfer();
 
         // Button Listeners
         buttonStartStop.setOnClickListener(new View.OnClickListener() {
@@ -193,34 +183,7 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
 
         // Drawer Layout
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.blueprintsPage){
-                    // Disable Blueprints Page when Timer is Running
-                    if (timerStatus == TimerStatus.STOPPED) {
-                        Intent buildIntent = new Intent(getApplicationContext(), BlueprintActivity.class);
-                        startActivity(buildIntent);
-                        drawerLayout.closeDrawers();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Construction Underway",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-                if (id == R.id.recordsPage){
-                    Intent buildIntent = new Intent(getApplicationContext(), RecordsActivity.class);
-                    startActivity(buildIntent);
-                    drawerLayout.closeDrawers();
-                }
-                return true;
-            }
-        });
+        createDrawer();
     }
 
     @Override
@@ -229,17 +192,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void saveBlueprint() {
-        blueprint = new BlueprintModel();
-        blueprint.setBuildingName(buildingName);
-        blueprint.setTotalMinutes(totalBuildTime);
-        blueprint.setBuildingImageId(building.buildingImageViewId);
-        dbBlueprints.insertBlueprint(blueprint);
-        resetBuildingName();
-        Toast.makeText(getApplicationContext(), "Saved to Blueprints",
-                Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -422,6 +374,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Create Drawer Layout
+     */
+    private void createDrawer() {
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.blueprintsPage) {
+                    // Disable Blueprints Page when Timer is Running
+                    if (timerStatus == TimerStatus.STOPPED) {
+                        Intent buildIntent = new Intent(getApplicationContext(), BlueprintActivity.class);
+                        startActivity(buildIntent);
+                        drawerLayout.closeDrawers();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Construction Underway",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+                if (id == R.id.recordsPage) {
+                    Intent buildIntent = new Intent(getApplicationContext(), RecordsActivity.class);
+                    startActivity(buildIntent);
+                    drawerLayout.closeDrawers();
+                }
+                if (id == R.id.cityPage) {
+                    Toast.makeText(getApplicationContext(), "Coming Soon!!",
+                            Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
+    }
+
+    /**
      * Create a Popup window on Build Success
      */
     public void createNewBuildingPopupDialog(boolean success) {
@@ -495,6 +485,37 @@ public class MainActivity extends AppCompatActivity {
         notificationManager.notify(100, builder.build());
     }
 
+    /**
+     * Saves Common Task as a Blueprint in the Blueprint Page
+     */
+    private void saveBlueprint() {
+        blueprint = new BlueprintModel();
+        blueprint.setBuildingName(buildingName);
+        blueprint.setTotalMinutes(totalBuildTime);
+        blueprint.setBuildingImageId(building.buildingImageViewId);
+        dbBlueprints.insertBlueprint(blueprint);
+        resetBuildingName();
+        Toast.makeText(getApplicationContext(), "Saved to Blueprints",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Transfers Blueprint data to Build Page
+     */
+    private void blueprintTransfer() {
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            buildingName = extras.getString("taskName");
+            totalBuildTime = extras.getInt("totalMinutes");
+            buildingImage.setImageResource(extras.getInt("buildingId"));
+            textViewTime.setText(totalBuildTime + ":00");
+            timeCountInMilliSeconds = (totalBuildTime * 1000 * 60) / TIME_SCALE;
+            int progress = totalBuildTime/15;
+            seekTime.setProgress(progress-1);
+            confirmBuildingName();
+        }
+    }
+
     private void resetBuildingName() {
         buildingName = "";
         buildingNameText.setVisibility(View.INVISIBLE);
@@ -518,10 +539,10 @@ public class MainActivity extends AppCompatActivity {
         vibrator.vibrate(200);
         buildingNameEdit.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
         buildingNameEdit.setHintTextColor(getResources().getColor(R.color.colorRed));
-        buildingNameEdit.startAnimation(errorAnimation());
+        buildingNameEdit.startAnimation(errorShakeAnimation());
     }
 
-    private TranslateAnimation errorAnimation() {
+    private TranslateAnimation errorShakeAnimation() {
         TranslateAnimation shake = new TranslateAnimation(0, 20, 0, 0);
         shake.setDuration(500);
         shake.setInterpolator(new CycleInterpolator(7));

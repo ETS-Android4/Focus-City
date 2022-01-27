@@ -30,6 +30,7 @@ import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -52,12 +53,15 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     // TODO In app TimeScale Adjust
-    private final int TIME_SCALE = 1; // Time scale control: 1 for Minutes, 60 for Seconds
-
+    // Constants
+    private final int TIME_SCALE = 60; // Time scale control: 1 for Minutes, 60 for Seconds
     private final String CHANNEL_ID = "Focus";
 
+    // For Timer Use
     protected static int totalBuildTime = 15;
+    private long timeCountInMilliSeconds = (15 * 1 * 60000) / TIME_SCALE; // Minutes-Seconds
 
+    // Databases and Saves Handling
     private RecordsDatabaseHandler dbRecords;
     private RecordModel record;
     private BlueprintsDatabaseHandler dbBlueprints;
@@ -71,24 +75,24 @@ public class MainActivity extends AppCompatActivity {
     private TimerStatus timerStatus = TimerStatus.STOPPED;
     private CountDownTimer countDownTimer;
 
-    // Views Declaration
+    // Timer Views Declaration
     private SeekBar seekTime;
     private ProgressBar progressBarCircle;
     private TextView textViewTime;
 
+    // Building Views Declaration
+    private String buildingName = "";
     private EditText buildingNameEdit;
     private TextView buildingNameText;
     private ImageView editNameButton;
-    private String buildingName = "";
+    protected ImageView buildingImage;
+    protected Building building;
 
+    // Buttons Declaration
     private Button buttonStartStop;
     private Button buttonSave;
 
-    protected ImageView buildingImage;
-    protected Building building;
-    private long timeCountInMilliSeconds = (15 * 1 * 60000) / TIME_SCALE; // Minutes-Seconds for Testing
-
-    // Drawer Layout
+    // Drawer Declaration
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawerLayout;
     private NavigationView navView;
@@ -98,21 +102,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // View Initialisation
+        // Timer Views Assignment
         seekTime = (SeekBar) findViewById(R.id.seekBarTimeSelect);
         progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
 
-        buttonStartStop = (Button) findViewById(R.id.startStopButton);
-        buttonSave = (Button) findViewById(R.id.saveButton);
-
-        buildingImage = (ImageView) findViewById(R.id.buildingImage);
-
+        // Building Views Assignment
         buildingNameEdit = (EditText) findViewById(R.id.buildingNameEdit);
         buildingNameText = (TextView) findViewById(R.id.buildingNameText);
         editNameButton = (ImageView) findViewById(R.id.editNameButton);
+        buildingImage = (ImageView) findViewById(R.id.buildingImage);
 
+        // Buttons Assignment
+        buttonStartStop = (Button) findViewById(R.id.startStopButton);
+        buttonSave = (Button) findViewById(R.id.saveButton);
+
+        // Drawer Assignment
         navView = (NavigationView) findViewById(R.id.navView);
+
+        // Fetch Databases
+        dbRecords = new RecordsDatabaseHandler(getApplicationContext());
+        dbRecords.openDatabase();
+        dbBlueprints = new BlueprintsDatabaseHandler(getApplicationContext());
+        dbBlueprints.openDatabase();
+
+        // Create Notification Channel
+        createNotificationChannel();
+
+        // Drawer Layout
+        createDrawer();
 
         // Show Default 15 min Building on Startup
         building = new Building("Jett", R.drawable.jett15);
@@ -151,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // EditText Listener
+        // EditText Listeners
         buildingNameEdit.setOnEditorActionListener(new android.widget.TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
@@ -170,20 +188,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Create Database to Save Data
-        dbRecords = new RecordsDatabaseHandler(getApplicationContext());
-        dbRecords.openDatabase();
-        dbBlueprints = new BlueprintsDatabaseHandler(getApplicationContext());
-        dbBlueprints.openDatabase();
-
         // Activate SeekBar Time Select
         setTimerValues();
-
-        // Create Notification Channel
-        createNotificationChannel();
-
-        // Drawer Layout
-        createDrawer();
     }
 
     @Override
@@ -192,61 +198,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Wired to StartStop Button to start or stop timer
-     */
-    private void startStop() {
-        // Button shows BUILD
-        if (timerStatus == TimerStatus.STOPPED) {
-
-            confirmBuildingName();
-            editNameButton.setVisibility(View.GONE);
-            buttonSave.setEnabled(false);
-
-            // Record Start Time
-            record = new RecordModel();
-            record.setDateTimeFormatted();
-            record.setBuildingName(buildingName);
-            // Countdown Timer Start Status
-            timerStatus = TimerStatus.STARTED;
-            // Change Button Text
-            buttonStartStop.setText("Give Up");
-            // Make SeekBar Editable
-            seekTime.setEnabled(false);
-            // Start Countdown
-            startCountdownTimer();
-            // TODO Show Warning of Building Destruction Before Starting
-
-        // Button Shows GIVE UP
-        } else {
-
-            resetBuildingName();
-            buildingNameEdit.getText().clear();
-            buttonSave.setEnabled(true);
-
-            // Add Failed Build to Records
-            record.setTotalMinutes(0);
-            record.setBuildingImageId(R.drawable.jett_ruins);
-            dbRecords.insertRecord(record);
-            // Countdown Timer Stop Status
-            timerStatus = TimerStatus.STOPPED;
-            // Stop Countdown Timer
-            countDownTimer.cancel();
-            // Change Button Text
-            buttonStartStop.setText("Build");
-            // Make SeekBar Editable
-            seekTime.setEnabled(true);
-            textViewTime.setText(totalBuildTime + ":00");
-            // Shows an Unsuccessful Dialog
-            createNewBuildingPopupDialog(false);
-            // Reset Building to Previous Selection
-            building.changeBuilding(totalBuildTime, buildingImage);
-            // TODO Hold Give Up Warning Dialog
-        }
-        // Initialise Progress Bar
-        setProgressBarValues();
     }
 
     /**
@@ -290,6 +241,80 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {};
         });
+    }
+
+    /**
+     * Method to set Circular Progress Bar Values
+     */
+    public void setProgressBarValues() {
+        progressBarCircle.setMax((int) timeCountInMilliSeconds/1000);
+        progressBarCircle.setProgress((int) timeCountInMilliSeconds/1000);
+    }
+
+    /**
+     * Wired to StartStop Button to start or stop timer
+     */
+    private void startStop() {
+        // Button shows BUILD
+        if (timerStatus == TimerStatus.STOPPED) {
+            startTimer();
+            // Button Shows GIVE UP
+        } else {
+            createWarningPopupDialog();
+        }
+    }
+
+    /**
+     * Button Starts the Timer
+     */
+    public void startTimer() {
+        confirmBuildingName();
+        editNameButton.setVisibility(View.GONE);
+        buttonSave.setEnabled(false);
+
+        // Record Start Time
+        record = new RecordModel();
+        record.setDateTimeFormatted();
+        record.setBuildingName(buildingName);
+        // Countdown Timer Start Status
+        timerStatus = TimerStatus.STARTED;
+        // Change Button Text
+        buttonStartStop.setText("Give Up");
+        // Make SeekBar Editable
+        seekTime.setEnabled(false);
+        // Start Countdown
+        startCountdownTimer();
+        // Initialise Progress Bar
+        setProgressBarValues();
+    }
+
+    /**
+     * Button Stops the Timer
+     */
+    public void stopTimer() {
+        resetBuildingName();
+        buildingNameEdit.getText().clear();
+        buttonSave.setEnabled(true);
+
+        // Add Failed Build to Records
+        record.setTotalMinutes(0);
+        record.setBuildingImageId(R.drawable.jett_ruins);
+        dbRecords.insertRecord(record);
+        // Countdown Timer Stop Status
+        timerStatus = TimerStatus.STOPPED;
+        // Stop Countdown Timer
+        countDownTimer.cancel();
+        // Change Button Text
+        buttonStartStop.setText("Build");
+        // Make SeekBar Editable
+        seekTime.setEnabled(true);
+        textViewTime.setText(totalBuildTime + ":00");
+        // Shows an Unsuccessful Dialog
+        createNewBuildingPopupDialog(false);
+        // Reset Building to Previous Selection
+        building.changeBuilding(totalBuildTime, buildingImage);
+        // Initialise Progress Bar
+        setProgressBarValues();
     }
 
     /**
@@ -350,15 +375,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         countDownTimer.start();
-    }
-
-    /**
-     * Method to set Circular Progress Bar Values
-     */
-
-    public void setProgressBarValues() {
-        progressBarCircle.setMax((int) timeCountInMilliSeconds/1000);
-        progressBarCircle.setProgress((int) timeCountInMilliSeconds/1000);
     }
 
     /**
@@ -447,6 +463,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Create Warning Popup Before Destroying Building
+     */
+    public void createWarningPopupDialog() {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        Button giveUpButton;
+        ImageButton warningCloseButton;
+
+        final View popupView = getLayoutInflater().inflate(R.layout.warning_popup_layout, null);
+        giveUpButton = (Button) popupView.findViewById(R.id.giveUpButton);
+        warningCloseButton = (ImageButton) popupView.findViewById(R.id.warningCloseButton);
+
+        dialogBuilder.setView(popupView);
+        final AlertDialog dialog = dialogBuilder.create();
+        // Rounded Corners
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        warningCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { dialog.dismiss(); }
+        });
+
+        giveUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopTimer();
+                dialog.dismiss();
+            }
+        });
+    }
+
+    /**
      * Create a Notification Channel for API 26+ only
      */
     private void createNotificationChannel() {
@@ -463,6 +511,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Displays Notification on Construction Complete
+     */
     private void createNotifications() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -8,6 +8,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -21,10 +22,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
@@ -32,6 +36,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -90,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Buttons Declaration
     private Button buttonStartStop;
-    private Button buttonSave;
 
     // Drawer Declaration
     private ActionBarDrawerToggle toggle;
@@ -115,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Buttons Assignment
         buttonStartStop = (Button) findViewById(R.id.startStopButton);
-        buttonSave = (Button) findViewById(R.id.saveButton);
 
         // Drawer Assignment
         navView = (NavigationView) findViewById(R.id.navView);
@@ -146,25 +149,14 @@ public class MainActivity extends AppCompatActivity {
                 if (buildingName.isEmpty()) {
                     buildingName = buildingNameEdit.getText().toString();
                 }
-                if (!buildingName.isEmpty()) {
+                if (timerStatus == TimerStatus.STOPPED) {
+                    if (!buildingName.isEmpty()) {
+                        createBottomDialog();
+                    } else {
+                        errorVibrate();
+                    }
+                } else {
                     startStop();
-                } else {
-                    errorVibrate();
-                }
-            }
-        });
-
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (buildingName.isEmpty()) {
-                    buildingName = buildingNameEdit.getText().toString();
-                }
-                if (!buildingName.isEmpty()) {
-                    saveBlueprint();
-                    buildingNameEdit.getText().clear();
-                } else {
-                    errorVibrate();
                 }
             }
         });
@@ -270,7 +262,6 @@ public class MainActivity extends AppCompatActivity {
     public void startTimer() {
         confirmBuildingName();
         editNameButton.setVisibility(View.GONE);
-        buttonSave.setEnabled(false);
 
         // Record Start Time
         record = new RecordModel();
@@ -294,7 +285,6 @@ public class MainActivity extends AppCompatActivity {
     public void stopTimer() {
         resetBuildingName();
         buildingNameEdit.getText().clear();
-        buttonSave.setEnabled(true);
 
         // Add Failed Build to Records
         record.setTotalMinutes(0);
@@ -346,7 +336,6 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
 
                 resetBuildingName();
-                buttonSave.setEnabled(true);
 
                 // Show Build Complete Notification
                 createNotifications();
@@ -494,6 +483,37 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void createBottomDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottom_sheet_layout);
+
+        Button nowButton = dialog.findViewById(R.id.nowButton);
+        Button laterButton = dialog.findViewById(R.id.laterButton);
+
+        nowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startStop();
+                dialog.dismiss();
+            }
+        });
+
+        laterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveBlueprint();
+                buildingNameEdit.getText().clear();
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+    }
+
     /**
      * Create a Notification Channel for API 26+ only
      */
@@ -516,7 +536,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void createNotifications() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(getApplicationContext(), 0, intent,0);
 

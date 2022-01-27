@@ -4,52 +4,75 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_bg">
+    android:background="@drawable/bottom_dialog_bg">
 
     <TextView
-        android:id="@+id/enterNamePrompt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="24dp"
-        android:text="Please Enter Building Name"
-        android:textColor="@color/white"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/enterTaskName"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
-        android:hint="Task Name"
-        android:textColorHint="#3C4A70"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/enterNamePrompt" />
-
-    <Button
-        android:id="@+id/buildButton"
+        android:id="@+id/nowPrompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginTop="18dp"
+        android:text="Start Building Now"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/nowButton"
+        app:layout_constraintLeft_toLeftOf="@id/nowButton"
+        app:layout_constraintRight_toRightOf="@id/nowButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/laterPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="Save To Blueprints"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/laterButton"
+        app:layout_constraintLeft_toLeftOf="@id/laterButton"
+        app:layout_constraintRight_toRightOf="@id/laterButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/nowButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
         android:paddingLeft="25dp"
         android:paddingTop="12dp"
         android:paddingRight="25dp"
         android:paddingBottom="12dp"
-        android:text="Build"
+        android:text=" Now "
+        android:textStyle="bold"
+        android:gravity="center"
         app:cornerRadius="30dp"
-        app:layout_constraintEnd_toEndOf="@id/enterTaskName"
-        app:layout_constraintStart_toStartOf="@id/enterTaskName"
-        app:layout_constraintTop_toBottomOf="@id/enterTaskName" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nowPrompt" />
+
+    <Button
+        android:id="@+id/laterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="40dp"
+        android:paddingLeft="25dp"
+        android:paddingTop="12dp"
+        android:paddingRight="25dp"
+        android:paddingBottom="12dp"
+        android:text="Later"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:cornerRadius="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/laterPrompt" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

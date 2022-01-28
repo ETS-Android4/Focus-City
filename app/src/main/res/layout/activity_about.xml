@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    tools:context=".RecordsActivity"
+    tools:visibility="visible">
+
+    <TextView
+        android:id="@+id/aboutsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="About"
+        android:textColor="@color/purple_300"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_toRightOf="@id/aboutsText"
+        android:src="@drawable/ic_baseline_info_24" />
+
+    <TextView
+        android:id="@+id/testDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/aboutsText"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="THIS IS A TEST VERSION OF THE APP, THE MINUTES HAVE BEEN CONVERTED TO SECONDS FOR TESTING PURPOSES"
+        android:textColor="#EF5350"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/imagesText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/testDesc"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="Images"
+        android:textColor="#FF8A65"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/imagesDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:layout_below="@id/imagesText"
+        android:text="Drawer Banner  |  upklyak, freepik.com\nBuildings  |  Andy, Drawn with Procreate"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/soundsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imagesDesc"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="Sounds"
+        android:textColor="#81C784"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/soundsDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:layout_below="@id/soundsText"
+        android:text="Pop Sound Asset  |  InspectorJ, freesound.org\nSound Editing  |  Andy, Edited with Audacity"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/fontText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/soundsDesc"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="Fonts"
+        android:textColor="#64B5F6"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/fontDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:layout_below="@id/fontText"
+        android:text="Roboto Light  |  Google"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+
+</RelativeLayout>

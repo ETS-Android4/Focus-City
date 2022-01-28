@@ -29,7 +29,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
@@ -37,7 +36,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -60,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO In app TimeScale Adjust
     // Constants
-    private final int TIME_SCALE = 60; // Time scale control: 1 for Minutes, 60 for Seconds
+    private static int TIME_SCALE = 60; // Time scale control: 1 for Minutes, 60 for Seconds
     private final String CHANNEL_ID = "Focus";
 
     // For Timer Use
     protected static int totalBuildTime = 15;
-    private long timeCountInMilliSeconds = (15 * 1 * 60000) / TIME_SCALE; // Minutes-Seconds
+    private long timeCountInMilliSeconds; // Minutes-Seconds
 
     // Databases and Saves Handling
     private RecordsDatabaseHandler dbRecords;
@@ -106,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        timeCountInMilliSeconds = (15 * 1 * 60000) / TIME_SCALE; // Minutes-Seconds
 
         // Timer Views Assignment
         seekTime = (SeekBar) findViewById(R.id.seekBarTimeSelect);
@@ -409,6 +409,10 @@ public class MainActivity extends AppCompatActivity {
                 if (id == R.id.cityPage) {
                     Toast.makeText(getApplicationContext(), "Coming Soon!!",
                             Toast.LENGTH_SHORT).show();
+                } if (id == R.id.aboutPage) {
+                    Intent buildIntent = new Intent(getApplicationContext(), AboutActivity.class);
+                    startActivity(buildIntent);
+                    drawerLayout.closeDrawers();
                 }
                 return true;
             }

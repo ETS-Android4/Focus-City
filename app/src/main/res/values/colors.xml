@@ -14,10 +14,9 @@
     <color name="materialGray">#121212</color>
     <color name="colorPrimary">#181C29</color>
     <color name="colorPrimaryDark">#16181E</color>
-    <color name="colorBackground">#181C23</color>
+    <color name="colorBackground">#1B1E24</color>
     <color name="colorPink">#E13670</color>
     <color name="colorLightPink">#F48FB1</color>
     <color name="colorSakura">#D65F77</color>
     <color name="colorRed">#D32F2F</color>
-
 </resources>

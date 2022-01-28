@@ -16,4 +16,9 @@
         android:title="City"
         android:icon="@drawable/ic_baseline_corporate_fare_24"/>
 
+    <item
+        android:id="@+id/aboutPage"
+        android:title="About"
+        android:icon="@drawable/ic_baseline_info_24"/>
+
 </menu>

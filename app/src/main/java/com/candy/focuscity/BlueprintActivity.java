@@ -29,10 +29,8 @@ public class BlueprintActivity extends AppCompatActivity {
     private RecyclerView blueprintRecyclerView;
     private BlueprintAdapter blueprintAdapter;
     private BlueprintsDatabaseHandler db;
-    private TextView textViewWhenEmpty;
-
+    public TextView textViewWhenEmpty;
     private Button buildButton;
-
     private List<BlueprintModel> blueprintsList;
 
     @Override
@@ -52,7 +50,7 @@ public class BlueprintActivity extends AppCompatActivity {
 
         blueprintRecyclerView = (RecyclerView) findViewById(R.id.blueprintsRecyclerView);
         blueprintRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        blueprintAdapter = new BlueprintAdapter(BlueprintActivity.this);
+        blueprintAdapter = new BlueprintAdapter(db,BlueprintActivity.this, this);
         blueprintRecyclerView.setAdapter(blueprintAdapter);
 
         blueprintsList = db.getAllBlueprints();
@@ -65,6 +63,8 @@ public class BlueprintActivity extends AppCompatActivity {
         // Show Empty Records Hint when Records is Empty
         if (!blueprintsList.isEmpty()) {
             textViewWhenEmpty.setVisibility(View.INVISIBLE);
+        } else {
+            textViewWhenEmpty.setVisibility(View.VISIBLE);
         }
 
     }

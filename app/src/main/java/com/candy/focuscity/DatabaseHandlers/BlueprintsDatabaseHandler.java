@@ -56,6 +56,10 @@ public class BlueprintsDatabaseHandler extends SQLiteOpenHelper {
         db.insert(BLUEPRINTS_TABLE, null, cv);
     }
 
+    public void deleteBlueprint (int id) {
+        db.delete(BLUEPRINTS_TABLE, ID + "=?", new String[] {String.valueOf(id)} );
+    }
+
     @SuppressLint("Range")
     public List<BlueprintModel> getAllBlueprints() {
         List<BlueprintModel> blueprintsList = new ArrayList<>();

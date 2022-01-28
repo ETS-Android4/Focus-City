@@ -6,12 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.candy.focuscity.BlueprintActivity;
+import com.candy.focuscity.DatabaseHandlers.BlueprintsDatabaseHandler;
 import com.candy.focuscity.MainActivity;
 import com.candy.focuscity.Model.BlueprintModel;
 import com.candy.focuscity.Model.RecordModel;
@@ -24,9 +26,13 @@ public class BlueprintAdapter extends RecyclerView.Adapter<BlueprintAdapter.View
 
     private List<BlueprintModel> blueprintList;
     private Context context;
+    private BlueprintActivity activity;
+    private BlueprintsDatabaseHandler db;
 
-    public BlueprintAdapter(Context context) {
+    public BlueprintAdapter(BlueprintsDatabaseHandler db, Context context, BlueprintActivity activity) {
         this.context = context;
+        this.activity = activity;
+        this.db = db;
     }
 
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,6 +42,7 @@ public class BlueprintAdapter extends RecyclerView.Adapter<BlueprintAdapter.View
     }
 
     public void onBindViewHolder(ViewHolder holder, int position) {
+        db.openDatabase();
         BlueprintModel item = blueprintList.get(position);
         holder.blueprintBuildingImage.setImageResource(item.getBuildingImageId());
         holder.blueprintBuildingName.setText(item.getBuildingName());
@@ -50,10 +57,26 @@ public class BlueprintAdapter extends RecyclerView.Adapter<BlueprintAdapter.View
                 context.startActivity(i);
             }
         });
+        holder.blueprintCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteItem(holder.getAdapterPosition());
+            }
+        });
     }
 
     public int getItemCount() {
         return blueprintList.size();
+    }
+
+    public void deleteItem(int position) {
+        BlueprintModel item = blueprintList.get(position);
+        db.deleteBlueprint(item.getId());
+        blueprintList.remove(position);
+        notifyItemRemoved(position);
+        if (blueprintList.isEmpty()) {
+            activity.textViewWhenEmpty.setVisibility(View.VISIBLE);
+        }
     }
 
     public void setBlueprints(List<BlueprintModel> blueprintList) {
@@ -67,6 +90,7 @@ public class BlueprintAdapter extends RecyclerView.Adapter<BlueprintAdapter.View
         TextView blueprintBuildingName;
         TextView blueprintTotalMinutes;
         Button blueprintBuildButton;
+        ImageButton blueprintCloseButton;
 
         ViewHolder(View view) {
             super(view);
@@ -74,6 +98,7 @@ public class BlueprintAdapter extends RecyclerView.Adapter<BlueprintAdapter.View
             blueprintBuildingName = view.findViewById(R.id.blueprintBuildingName);
             blueprintTotalMinutes = view.findViewById(R.id.blueprintTotalMinutes);
             blueprintBuildButton = view.findViewById(R.id.blueprintBuildButton);
+            blueprintCloseButton = view.findViewById(R.id.blueprintCloseButton);
         }
 
     }

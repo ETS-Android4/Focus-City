@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
@@ -326,8 +327,6 @@ public class MainActivity extends AppCompatActivity {
                     building.changeBuilding(120, buildingImage);
                 }
                 buildingImage.setImageResource(building.buildingImageViewId);
-
-                System.out.println(elapsed); // TODO Remove Debugging
                 textViewTime.setText(msTimeFormatter(millisUntilFinished));
                 progressBarCircle.setProgress((int) (millisUntilFinished/1000));
             }

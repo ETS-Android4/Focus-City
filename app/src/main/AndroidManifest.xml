@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FocusCity">
         <activity
+            android:name=".CityActivity"
+            android:exported="false" />
+        <activity
             android:name=".AboutActivity"
             android:exported="false" />
         <activity

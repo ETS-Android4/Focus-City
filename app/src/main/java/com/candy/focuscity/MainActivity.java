@@ -400,10 +400,10 @@ public class MainActivity extends AppCompatActivity {
                     Intent buildIntent = new Intent(getApplicationContext(), RecordsActivity.class);
                     startActivity(buildIntent);
                     drawerLayout.closeDrawers();
-                }
-                if (id == R.id.cityPage) {
-                    Toast.makeText(getApplicationContext(), "Coming Soon!!",
-                            Toast.LENGTH_SHORT).show();
+                }if (id == R.id.cityPage) {
+                    Intent buildIntent = new Intent(getApplicationContext(), CityActivity.class);
+                    startActivity(buildIntent);
+                    drawerLayout.closeDrawers();
                 } if (id == R.id.aboutPage) {
                     Intent buildIntent = new Intent(getApplicationContext(), AboutActivity.class);
                     startActivity(buildIntent);

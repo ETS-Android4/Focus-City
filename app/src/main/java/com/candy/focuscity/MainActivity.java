@@ -56,9 +56,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class MainActivity extends AppCompatActivity {
 
-    // TODO In app TimeScale Adjust
     // Constants
-    private static int TIME_SCALE = 60; // Time scale control: 1 for Minutes, 60 for Seconds
+    private static final int TIME_SCALE = 60; // Time scale control: 1 for Minutes, 60 for Seconds
     private final String CHANNEL_ID = "Focus";
 
     // For Timer Use
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        timeCountInMilliSeconds = (15 * 1 * 60000) / TIME_SCALE; // Minutes-Seconds
+        timeCountInMilliSeconds = (15 * 60000) / TIME_SCALE; // Minutes-Seconds
 
         // Timer Views Assignment
         seekTime = (SeekBar) findViewById(R.id.seekBarTimeSelect);
@@ -197,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
      * Select Timer Countdown Values by using SeekBar as controller
      */
     private void setTimerValues() {
-        // TODO Stylize SeekBar with Gradient
         seekTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int selectedTime; // Minutes
             @Override
@@ -206,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
                 seekTime.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 MediaPlayer popSound = null;
 
-                // TODO Add animations
                 if (selectedTime < 60) {
                     popSound = MediaPlayer.create(MainActivity.this, R.raw.pope5);
                 } else if (selectedTime < 90) {
@@ -230,9 +227,9 @@ public class MainActivity extends AppCompatActivity {
                 timeCountInMilliSeconds = (selectedTime * 1000 * 60) / TIME_SCALE; // Minutes-Seconds (Del/60)
             }
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {};
+            public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {};
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
 
@@ -359,7 +356,6 @@ public class MainActivity extends AppCompatActivity {
                 building = new Building("Jett", R.drawable.jett15);
                 building.changeBuilding(totalBuildTime, buildingImage);
                 // TODO Add different Buildings
-
             }
         };
         countDownTimer.start();
@@ -373,7 +369,6 @@ public class MainActivity extends AppCompatActivity {
                 TimeUnit.MILLISECONDS.toMinutes(milliSeconds),
                 TimeUnit.MILLISECONDS.toSeconds(milliSeconds) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
-
         return ms;
     }
 

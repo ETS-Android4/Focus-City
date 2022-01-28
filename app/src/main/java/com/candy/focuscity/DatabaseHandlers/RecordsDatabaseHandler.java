@@ -15,7 +15,7 @@ import java.util.List;
 public class RecordsDatabaseHandler extends SQLiteOpenHelper {
 
     private static final int VERSION = 1;
-    private static final String NAME = "recordsDatabase";
+    private static final String NAME = "recordDatabase";
     private static final String RECORDS_TABLE = "records";
     private static final String ID = "id";
     private static final String DATE_TIME = "dateTime";

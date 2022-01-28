@@ -31,3 +31,9 @@ Challenges ~
 Notes ~
 This app was inspired by The Forest: Stay Focused but I included new features that I felt was missing in that app.
 The Minutes have been converted to Seconds for testing purposes. Change the TIME_SCALE Constant in MainActivity for normal usage.
+
+Screenshots ~
+![Screenshot_20220128-181444_Focus City](https://user-images.githubusercontent.com/80891206/151504078-afefd4c5-3246-4496-9a33-2c4e4e8a8992.jpg)
+![Screenshot_20220128-181517_Focus City](https://user-images.githubusercontent.com/80891206/151504086-5da2cbd6-d37e-4816-9d0f-51ab6dbaafe8.jpg)
+![Screenshot_20220128-181510_Focus City](https://user-images.githubusercontent.com/80891206/151504099-7410d8d9-152a-4c23-8c1a-5d1434569e7e.jpg)
+![Screenshot_20220128-181505_Focus City](https://user-images.githubusercontent.com/80891206/151504114-ca6b0e74-80bb-4b0d-801d-ae76e5464611.jpg)
